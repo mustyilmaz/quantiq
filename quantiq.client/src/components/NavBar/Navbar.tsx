@@ -20,6 +20,9 @@ const Navbar = () => {
             <Link to="/services" className="navbar-link">Services</Link>
           </li>
           <li className="navbar-item">
+            <Link to="/weather-forecast" className="navbar-link">Test Client-server</Link>
+          </li>
+          <li className="navbar-item">
             <Link to="/commission-calculator" className="navbar-link">Commission Calculator</Link>
           </li>
         </ul>
