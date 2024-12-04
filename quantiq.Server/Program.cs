@@ -1,4 +1,3 @@
-
 namespace quantiq.Server
 {
     public class Program
@@ -7,10 +6,18 @@ namespace quantiq.Server
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowLocalhost", builder =>
+                {
+                    builder.WithOrigins("https://localhost:54375") 
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
+            });
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -19,7 +26,8 @@ namespace quantiq.Server
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
-            // Configure the HTTP request pipeline.
+            app.UseCors("AllowLocalhost");
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -27,9 +35,7 @@ namespace quantiq.Server
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
 
             app.MapControllers();
 
