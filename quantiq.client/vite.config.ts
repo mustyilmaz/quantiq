@@ -1,16 +1,19 @@
 import { fileURLToPath, URL } from 'node:url';
-
 import { defineConfig } from 'vite';
 import plugin from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
+import dotenv from 'dotenv'; // dotenv'i import ediyoruz
+
+// .env dosyasını yükleyelim
+dotenv.config(); // .env dosyasındaki değişkenleri yükler
+
 import child_process from 'child_process';
-import { env } from 'process';
 
 const baseFolder =
-    env.APPDATA !== undefined && env.APPDATA !== ''
-        ? `${env.APPDATA}/ASP.NET/https`
-        : `${env.HOME}/.aspnet/https`;
+    process.env.APPDATA !== undefined && process.env.APPDATA !== ''
+        ? `${process.env.APPDATA}/ASP.NET/https`
+        : `${process.env.HOME}/.aspnet/https`;
 
 const certificateName = "quantiq.client";
 const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
@@ -34,10 +37,13 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
     }
 }
 
-const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7161';
-console.log("targets value ",target, "env deger check: ",env.ASPNETCORE_HTTPS_PORT);
-// https://vitejs.dev/config/
+const target = process.env.VITE_ASPNETCORE_HTTPS_PORT
+    ? `http://localhost:${process.env.VITE_ASPNETCORE_HTTPS_PORT}`
+    : process.env.VITE_ASPNETCORE_URLS
+    ? process.env.VITE_ASPNETCORE_URLS.split(';')[0]
+    : 'http://localhost:7161';
+
+    // Vite configuration
 export default defineConfig({
     plugins: [plugin()],
     resolve: {
@@ -58,4 +64,4 @@ export default defineConfig({
             cert: fs.readFileSync(certFilePath),
         }
     }
-})
+});
