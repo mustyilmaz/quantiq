@@ -1,0 +1,125 @@
+.registerPage {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f4f4f4;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.formContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: white;
+  max-width: 50%;
+  width: 100%;
+}
+
+.formWrapper {
+  width: 100%;
+  max-width: 400px;
+}
+
+.bannerContainer {
+  flex: 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  padding: 2rem;
+  max-width: 50%;
+}
+
+.bannerContent {
+  max-width: 400px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.formTitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.formLabel {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #555;
+}
+
+.formInput {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.errorMessage {
+  color: #d9534f;
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.submitButton {
+  width: 100%;
+  background-color: #667eea;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submitButton:hover {
+  background-color: #5a67d8;
+}
+
+@media screen and (max-width: 1024px) {
+  .registerPage {
+    flex-direction: column;
+  }
+
+  .formContainer,
+  .bannerContainer {
+    max-width: 100%;
+    padding: 1.5rem;
+  }
+
+  .bannerContainer {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .formWrapper {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .formInput,
+  .submitButton {
+    padding: 0.625rem;
+    font-size: 0.9rem;
+  }
+}

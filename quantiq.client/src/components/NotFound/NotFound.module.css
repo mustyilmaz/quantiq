@@ -1,0 +1,67 @@
+.notFoundContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  padding: 20px;
+}
+
+.notFoundContent {
+  text-align: center;
+  background-color: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+}
+
+.notFoundTitle {
+  font-size: 6rem;
+  color: #3498db;
+  margin-bottom: 20px;
+  font-weight: bold;
+  letter-spacing: -4px;
+}
+
+.notFoundMessage {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.notFoundBtn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.notFoundBtn:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+.notFoundBtn:active {
+  transform: translateY(1px);
+}
+
+@media (max-width: 600px) {
+  .notFoundTitle {
+    font-size: 4rem;
+  }
+
+  .notFoundMessage {
+    font-size: 1rem;
+  }
+
+  .notFoundContent {
+    padding: 30px;
+  }
+}

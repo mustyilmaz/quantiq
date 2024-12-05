@@ -1,29 +1,64 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './Navbar.css';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import styles from './Navbar.module.css';
 
 const Navbar = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY;
+      setIsScrolled(offset > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
-    <nav className="navbar">
-      <div className="navbar-container">
-        <Link to="/" className="navbar-logo">
+    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
+      <div className={styles.navbarContainer}>
+        <Link
+          to="/"
+          className={styles.navbarLogo}
+        >
           HomePage
         </Link>
-        <ul className="navbar-menu">
-          <li className="navbar-item">
-            <Link to="/" className="navbar-link">Home</Link>
+        <ul className={styles.navbarMenu}>
+          <li className={styles.navbarItem}>
+            <Link
+              to="/"
+              className={`${styles.navbarLink} ${location.pathname === '/' ? styles.active : ''}`}
+            >
+              Home
+            </Link>
           </li>
-          <li className="navbar-item">
-            <Link to="/about" className="navbar-link">About</Link>
+          <li className={styles.navbarItem}>
+            <Link
+              to="/weather-forecast"
+              className={`${styles.navbarLink} ${location.pathname === '/weather-forecast' ? styles.active : ''}`}
+            >
+              Test Client-server
+            </Link>
           </li>
-          <li className="navbar-item">
-            <Link to="/services" className="navbar-link">Services</Link>
+          <li className={styles.navbarItem}>
+            <Link
+              to="/register"
+              className={`${styles.navbarLink} ${location.pathname === '/register' ? styles.active : ''}`}
+            >
+              Sign Up
+            </Link>
           </li>
-          <li className="navbar-item">
-            <Link to="/weather-forecast" className="navbar-link">Test Client-server</Link>
-          </li>
-          <li className="navbar-item">
-            <Link to="/commission-calculator" className="navbar-link">Commission Calculator</Link>
+          <li className={styles.navbarItem}>
+            <Link
+              to="/commission-calculator"
+              className={`${styles.navbarLink} ${location.pathname === '/commission-calculator' ? styles.active : ''}`}
+            >
+              Commission Calculator
+            </Link>
           </li>
         </ul>
       </div>

@@ -1,12 +1,17 @@
-import './NotFound.css';
+import styles from './NotFound.module.css';
 
 const NotFound = () => {
   return (
-    <div className="not-found-container">
-      <div className="not-found-content">
-        <h1 className="not-found-title">404</h1>
-        <p className="not-found-message">Oops! The page you're looking for doesn't exist.</p>
-        <button className="not-found-btn" onClick={() => window.location.href = '/'}>Go Back to Home</button>
+    <div className={styles.notFoundContainer}>
+      <div className={styles.notFoundContent}>
+        <h1 className={styles.notFoundTitle}>404</h1>
+        <p className={styles.notFoundMessage}>Oops! The page you're looking for doesn't exist.</p>
+        <button
+          className={styles.notFoundBtn}
+          onClick={() => window.location.href = '/'}
+        >
+          Go Back to Home
+        </button>
       </div>
     </div>
   );

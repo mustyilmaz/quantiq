@@ -1,0 +1,166 @@
+.homeContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.heroSection {
+  text-align: center;
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  margin-bottom: 3rem;
+}
+
+.mainTitle {
+  font-size: 3rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.subTitle {
+  font-size: 1.5rem;
+  color: #34495e;
+  margin-bottom: 2rem;
+  opacity: 0.8;
+}
+
+.ctaButtons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.primaryButton,
+.secondaryButton {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.primaryButton {
+  background-color: #3498db;
+  color: white;
+  border: none;
+}
+
+.primaryButton:hover {
+  background-color: #2980b9;
+}
+
+.secondaryButton {
+  background-color: transparent;
+  color: #3498db;
+  border: 2px solid #3498db;
+}
+
+.secondaryButton:hover {
+  background-color: #3498db;
+  color: white;
+}
+
+.featuresSection {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.feature {
+  text-align: center;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.feature:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.featureIcon {
+  width: 48px;
+  height: 48px;
+  color: #3498db;
+  margin-bottom: 1rem;
+}
+
+.feature h3 {
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.feature p {
+  color: #34495e;
+  opacity: 0.8;
+}
+
+.testimonialsSection {
+  text-align: center;
+  background-color: #f1f3f5;
+  padding: 3rem 0;
+  border-radius: 12px;
+}
+
+.testimonialsSection h2 {
+  margin-bottom: 2rem;
+  color: #2c3e50;
+}
+
+.testimonialGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.testimonial {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.testimonial p {
+  font-style: italic;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.testimonialAuthor {
+  color: #7f8c8d;
+  font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+  .featuresSection {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .testimonialGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainTitle {
+    font-size: 2.5rem;
+  }
+
+  .subTitle {
+    font-size: 1.2rem;
+  }
+
+  .ctaButtons {
+    flex-direction: column;
+  }
+
+  .featuresSection {
+    grid-template-columns: 1fr;
+  }
+}
