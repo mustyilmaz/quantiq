@@ -8,7 +8,7 @@ import CommissionCalculator from './components/CommissionCalculator/CommissionCa
 
 //InitialPage
 import WeatherForecast from './components/WeatherForecast/WeatherForecast';
-import Register from './components/Register/Register';
+import Register from './components/Auth/Register/Register';
 
 
 const App = () => {
