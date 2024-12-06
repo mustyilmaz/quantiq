@@ -54,6 +54,14 @@ const Navbar = () => {
           </li>
           <li className={styles.navbarItem}>
             <Link
+              to="/user/login"
+              className={`${styles.navbarLink} ${location.pathname === '/user/login' ? styles.active : ''}`}
+            >
+              Sign In
+            </Link>
+          </li>
+          <li className={styles.navbarItem}>
+            <Link
               to="/commission-calculator"
               className={`${styles.navbarLink} ${location.pathname === '/commission-calculator' ? styles.active : ''}`}
             >

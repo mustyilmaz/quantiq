@@ -1,0 +1,179 @@
+.loginPage {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f4f4f4;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.loginContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: white;
+  max-width: 50%;
+  width: 100%;
+}
+
+.loginWrapper {
+  width: 100%;
+  max-width: 400px;
+}
+
+.bannerContainer {
+  flex: 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  padding: 2rem;
+  max-width: 50%;
+}
+
+.loginTitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #333;
+  font-size: 2rem;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formLabel {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.formInput {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.submitButton {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #667eea;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submitButton:hover {
+  background-color: #5a67d8;
+}
+
+.submitButton:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.errorMessage {
+  color: #d9534f;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.divider span {
+  padding: 0 10px;
+  color: #888;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+}
+
+.googleButton {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: white;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.googleButton:hover {
+  background-color: #f4f4f4;
+}
+
+.footerLinks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.forgotPassword,
+.registerLink {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.forgotPassword:hover,
+.registerLink:hover {
+  text-decoration: underline;
+}
+
+@media screen and (max-width: 1024px) {
+  .loginPage {
+    flex-direction: column;
+  }
+
+  .loginContainer,
+  .bannerContainer {
+    max-width: 100%;
+    padding: 1.5rem;
+  }
+
+  .bannerContainer {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .loginWrapper {
+    max-width: 100%;
+  }
+}

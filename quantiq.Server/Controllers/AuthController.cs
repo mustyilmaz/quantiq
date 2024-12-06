@@ -6,7 +6,7 @@ using BCrypt.Net;
 using quantiq.Server.Data;
 using quantiq.Server.Dtos;
 using quantiq.Server.Models.Entities;
-
+using quantiq.Server.Services;
 namespace quantiq.Server.Controllers
 {
     [ApiController]
@@ -16,15 +16,18 @@ namespace quantiq.Server.Controllers
         private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _clientFactory;
+        private readonly AuthService _authService;
 
         public AuthController(
             AppDbContext context,
             IConfiguration configuration,
-            IHttpClientFactory clientFactory)
+            IHttpClientFactory clientFactory,
+            AuthService authService)
         {
             _context = context;
             _configuration = configuration;
             _clientFactory = clientFactory;
+            _authService = authService;
         }
 
         [HttpPost("register")]
@@ -61,32 +64,63 @@ namespace quantiq.Server.Controllers
         {
             try
             {
+                // ReCAPTCHA Secret Key'i almak
+                var secretKey = _configuration["Recaptcha:SecretKey"];
+                if (string.IsNullOrEmpty(secretKey) || string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("Secret key or token is missing.");
+                    return false;  // Secret key ya da token yoksa başarısız.
+                }
+
+                // HTTP client oluşturma
                 var client = _clientFactory.CreateClient();
+
+                // POST isteği gönderme
                 var response = await client.PostAsync(
                     "https://www.google.com/recaptcha/api/siteverify",
                     new FormUrlEncodedContent(new[]
                     {
-                        new KeyValuePair<string, string>("secret", _configuration["Recaptcha:SecretKey"]),
-                        new KeyValuePair<string, string>("response", token)
+                new KeyValuePair<string, string>("secret", secretKey),
+                new KeyValuePair<string, string>("response", token)
                     })
                 );
 
+                // Eğer istek başarısızsa
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("istek basarisiz amuagoyum");
+                    Console.WriteLine("ReCAPTCHA verification failed.");
                     return false;
                 }
 
+                // Yanıtı okuma
                 var content = await response.Content.ReadAsStringAsync();
                 var recaptchaResponse = JsonSerializer.Deserialize<RecaptchaResponse>(content);
 
+                // reCAPTCHA doğrulama sonucu
                 return recaptchaResponse?.Success ?? false;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error during reCAPTCHA verification: {ex.Message}");
-                return false;
+                return false;  // Hata durumunda başarısız.
             }
+        }
+
+
+        [HttpPost("user-login")]
+        public async Task<IActionResult> UserLogin([FromBody] UserLoginDto userLoginDto)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == userLoginDto.Email);
+
+            if (user == null){
+                return NotFound("user not found!");
+            }
+            if(!BCrypt.Net.BCrypt.Verify(userLoginDto.Password, user.PasswordHash)){
+                return Unauthorized("Invalid password");
+            }
+            Console.WriteLine("geldik abi hersey dogru");
+            var token = _authService.GenerateJwtToken(user);
+            return Ok(new { token });
         }
     }
 

@@ -9,6 +9,7 @@ import CommissionCalculator from './components/CommissionCalculator/CommissionCa
 //InitialPage
 import WeatherForecast from './components/WeatherForecast/WeatherForecast';
 import Register from './components/Auth/Register/Register';
+import UserLogin from './components/Auth/UserLogin/UserLogin';
 
 
 const App = () => {
@@ -19,6 +20,7 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
                 <Route path="/" element={<Home />} />
                 <Route path='register' element={<Register />}/>
+                <Route path='user/login' element={<UserLogin />}/>
                 <Route path="/weather-forecast" element={<WeatherForecast />} />
                 <Route path="/commission-calculator" element={<CommissionCalculator />} />
             </Routes>
