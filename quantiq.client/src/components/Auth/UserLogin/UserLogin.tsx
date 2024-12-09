@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import styles from './UserLogin.module.css';
+import React, { useState } from "react";
+import styles from "./UserLogin.module.css";
+import { authService } from "../authService";
+import { useNavigate } from "react-router-dom";
 
 interface LoginData {
   email: string;
@@ -7,16 +9,17 @@ interface LoginData {
 }
 
 const UserLogin: React.FC = () => {
+  const navigate = useNavigate();
   const [loginData, setLoginData] = useState<LoginData>({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setLoginData(prev => ({ ...prev, [id]: value }));
+    setLoginData((prev) => ({ ...prev, [id]: value }));
     setError(null);
   };
 
@@ -26,29 +29,24 @@ const UserLogin: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch('/api/Auth/user-login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(loginData)
+      await authService.login({
+        email: loginData.email,
+        password: loginData.password,
       });
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('authToken', data.token);
-        window.location.href = '/dashboard';
-      } else {
-        setError(data.message || 'Login failed');
-      }
-    } catch (err) {
-      setError('Network error. Please try again.');
-      console.error('Login error:', err);
+      navigate("/dashboard");
+    } catch (err: any) {
+      setError(err.message || "Login failed");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGoogleLogin = () => {
-    window.location.href = '/api/Auth/google-login';
+  const handleGoogleLogin = async () => {
+    try {
+      window.location.href = "/api/Auth/google-login";
+    } catch (err) {
+      setError("Google login failed");
+    }
   };
 
   return (
@@ -58,7 +56,9 @@ const UserLogin: React.FC = () => {
           <h1 className={styles.loginTitle}>Welcome Back</h1>
           <form onSubmit={handleSubmit} className={styles.loginForm}>
             <div className={styles.formGroup}>
-              <label htmlFor="email" className={styles.formLabel}>Email</label>
+              <label htmlFor="email" className={styles.formLabel}>
+                Email
+              </label>
               <input
                 type="email"
                 id="email"
@@ -70,7 +70,9 @@ const UserLogin: React.FC = () => {
               />
             </div>
             <div className={styles.formGroup}>
-              <label htmlFor="password" className={styles.formLabel}>Password</label>
+              <label htmlFor="password" className={styles.formLabel}>
+                Password
+              </label>
               <input
                 type="password"
                 id="password"
@@ -82,18 +84,18 @@ const UserLogin: React.FC = () => {
               />
             </div>
             {error && <div className={styles.errorMessage}>{error}</div>}
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className={styles.submitButton}
               disabled={isLoading}
             >
-              {isLoading ? 'Logging In...' : 'Login'}
+              {isLoading ? "Logging In..." : "Login"}
             </button>
             <div className={styles.divider}>
               <span>or</span>
             </div>
-            <button 
-              type="button" 
+            <button
+              type="button"
               className={styles.googleButton}
               onClick={handleGoogleLogin}
             >
@@ -114,8 +116,8 @@ const UserLogin: React.FC = () => {
         <div className={styles.bannerContent}>
           <h2>Welcome Back!</h2>
           <p>
-            Secure login with multiple authentication options.
-            Protect your account with our advanced security features.
+            Secure login with multiple authentication options. Protect your
+            account with our advanced security features.
           </p>
         </div>
       </div>

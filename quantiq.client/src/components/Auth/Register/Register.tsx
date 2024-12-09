@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+
 
 import styles from "./Register.module.css";
 
@@ -10,6 +13,7 @@ const Register = () => {
     password: "",
     confirmPassword: "",
     recaptchaToken: "",
+    phoneNumber: "",
   });
 
   const [validations, setValidations] = useState({
@@ -54,6 +58,10 @@ const Register = () => {
 
   const handleRecaptchaChange = (token: string | null) => {
     setRegisterData({ ...registerData, recaptchaToken: token || "" });
+  };
+
+  const handlePhoneNumberChange = (phoneNumber: string) => {
+    setRegisterData({ ...registerData, phoneNumber });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -184,6 +192,23 @@ const Register = () => {
                   Passwords do not match
                 </small>
               )}
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="phone" className={styles.formLabel}>
+                Telephone Number
+              </label>
+              <PhoneInput
+                country={'tr'}
+                value={registerData.phoneNumber}
+                onChange={handlePhoneNumberChange}
+                inputClass={styles.formInput}
+                containerClass={styles.phoneInputContainer}
+                inputProps={{
+                  id: 'phoneNumber',
+                  required: true,
+                }}
+              />
             </div>
 
             <ReCAPTCHA
