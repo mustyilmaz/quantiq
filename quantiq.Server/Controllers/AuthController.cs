@@ -40,9 +40,9 @@ namespace quantiq.Server.Controllers
             // }
 
             // Check if user already exists
-            if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
+            if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email || u.PhoneNumber == registerDto.PhoneNumber))
             {
-                return BadRequest("Email already exists");
+                return BadRequest("Email or Phone Number already exists");
             }
 
             // Create new user
@@ -50,6 +50,7 @@ namespace quantiq.Server.Controllers
             {
                 Name = registerDto.Name,
                 Email = registerDto.Email,
+                PhoneNumber = registerDto.PhoneNumber,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
                 CreatedAt = DateTime.UtcNow
             };
@@ -110,7 +111,9 @@ namespace quantiq.Server.Controllers
         [HttpPost("user-login")]
         public async Task<IActionResult> UserLogin([FromBody] UserLoginDto userLoginDto)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == userLoginDto.Email);
+            var user = await _context.Users.SingleOrDefaultAsync(u => 
+            u.Email == userLoginDto.EmailOrPhone || 
+            u.PhoneNumber == userLoginDto.EmailOrPhone);
 
             if (user == null){
                 return NotFound("user not found!");
@@ -118,7 +121,6 @@ namespace quantiq.Server.Controllers
             if(!BCrypt.Net.BCrypt.Verify(userLoginDto.Password, user.PasswordHash)){
                 return Unauthorized("Invalid password");
             }
-            Console.WriteLine("geldik abi hersey dogru");
             var token = _authService.GenerateJwtToken(user);
             return Ok(new { token });
         }

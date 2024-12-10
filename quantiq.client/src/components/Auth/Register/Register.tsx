@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-
+import { useNavigate } from "react-router-dom";
 
 import styles from "./Register.module.css";
 
@@ -64,6 +64,7 @@ const Register = () => {
     setRegisterData({ ...registerData, phoneNumber });
   };
 
+  const navigate = useNavigate();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -87,6 +88,7 @@ const Register = () => {
 
       if (response.ok) {
         alert("Registration successful!");
+        navigate("/user/login");
       } else {
         alert("Registration failed! Please contact support.");
       }

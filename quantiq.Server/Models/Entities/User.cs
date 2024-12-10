@@ -20,6 +20,9 @@ namespace quantiq.Server.Models.Entities
         public string Email { get; set; }
 
         [Required]
+        [StringLength(255)]
+        public string PhoneNumber { get; set; }
+        [Required]
         public string PasswordHash { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

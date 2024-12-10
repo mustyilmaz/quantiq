@@ -13,6 +13,10 @@ namespace quantiq.Server.Dtos
         public string Email { get; set; }
 
         [Required]
+        [StringLength(255)]
+        public string PhoneNumber { get; set; }
+
+        [Required]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", 
             ErrorMessage = "Password does not meet requirements")]
         public string Password { get; set; }

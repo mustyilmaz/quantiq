@@ -4,14 +4,14 @@ import { authService } from "../authService";
 import { useNavigate } from "react-router-dom";
 
 interface LoginData {
-  email: string;
+  emailOrPhone: string;
   password: string;
 }
 
 const UserLogin: React.FC = () => {
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState<LoginData>({
-    email: "",
+    emailOrPhone: "",
     password: "",
   });
   const [error, setError] = useState<string | null>(null);
@@ -30,10 +30,11 @@ const UserLogin: React.FC = () => {
 
     try {
       await authService.login({
-        email: loginData.email,
+        emailOrPhone: loginData.emailOrPhone,
         password: loginData.password,
       });
-      navigate("/dashboard");
+      console.log("Login successful");
+      navigate("/user/dashboard");
     } catch (err: any) {
       setError(err.message || "Login failed");
     } finally {
@@ -56,15 +57,15 @@ const UserLogin: React.FC = () => {
           <h1 className={styles.loginTitle}>Welcome Back</h1>
           <form onSubmit={handleSubmit} className={styles.loginForm}>
             <div className={styles.formGroup}>
-              <label htmlFor="email" className={styles.formLabel}>
-                Email
+              <label htmlFor="emailOrPhone" className={styles.formLabel}>
+                Email or Phone Number
               </label>
               <input
                 type="email"
-                id="email"
+                id="emailOrPhone"
                 className={styles.formInput}
-                placeholder="Enter your email"
-                value={loginData.email}
+                placeholder="Enter your email or phone number"
+                value={loginData.emailOrPhone}
                 onChange={handleInputChange}
                 required
               />

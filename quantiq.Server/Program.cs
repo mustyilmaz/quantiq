@@ -14,7 +14,9 @@ namespace quantiq.Server
             {
                 options.AddPolicy("AllowLocalhost", builder =>
                 {
-                    builder.WithOrigins("https://localhost:54375")
+                    builder.WithOrigins("https://localhost:54375",
+                    "http://localhost:54375"
+                    )
                            .AllowAnyHeader()
                            .AllowAnyMethod();
                 });
@@ -35,7 +37,7 @@ namespace quantiq.Server
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
+            app.UseRouting();
             app.UseCors("AllowLocalhost");
 
             if (app.Environment.IsDevelopment())

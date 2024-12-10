@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Navbar from './components/NavBar/NavBar';
+import Footer from './components/Footer/Footer';
 import NotFound from './components/NotFound/NotFound';
 import Home from './components/Home/Home';
 import CommissionCalculator from './components/CommissionCalculator/CommissionCalculator';
@@ -10,6 +11,8 @@ import CommissionCalculator from './components/CommissionCalculator/CommissionCa
 import WeatherForecast from './components/WeatherForecast/WeatherForecast';
 import Register from './components/Auth/Register/Register';
 import UserLogin from './components/Auth/UserLogin/UserLogin';
+
+import "./App.css";
 
 
 const App = () => {
@@ -24,6 +27,7 @@ const App = () => {
                 <Route path="/weather-forecast" element={<WeatherForecast />} />
                 <Route path="/commission-calculator" element={<CommissionCalculator />} />
             </Routes>
+            <Footer/>
         </Router>
     );
 }
