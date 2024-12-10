@@ -66,6 +66,7 @@ namespace quantiq.Server.Controllers
             try
             {
                 // ReCAPTCHA Secret Key'i almak
+                
                 var secretKey = _configuration["Recaptcha:SecretKey"];
                 if (string.IsNullOrEmpty(secretKey) || string.IsNullOrEmpty(token))
                 {
