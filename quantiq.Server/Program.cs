@@ -34,6 +34,13 @@ namespace quantiq.Server
             builder.Services.AddScoped<AuthService>();
 
             var app = builder.Build();
+            
+            //Auto Migration için eklendi
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                dbContext.Database.Migrate();
+            }
 
             app.UseDefaultFiles();
             app.UseStaticFiles();

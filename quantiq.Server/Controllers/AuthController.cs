@@ -124,14 +124,14 @@ namespace quantiq.Server.Controllers
                 return Unauthorized("Invalid password");
             }
             //last login update
-            user.LastLogin = DateTime.UtcNow;
+            user.LastLoginAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
             var token = _authService.GenerateJwtToken(user);
             return Ok(new { token });
         }
 
-        [HttpPost("verify-token")]
-        public async Task<IActionResult> VerifyToken([FromBody] string token)
+        /* [HttpPost("verify-token")]
+        public async Task<IActionResult> VerifyToken([FromBody] string inputtoken)
         {
             try
             {
@@ -158,7 +158,7 @@ namespace quantiq.Server.Controllers
             {
                 return Unauthorized("Invalid token");
             }
-        }
+        } */
     }
 
     public class RecaptchaResponse
