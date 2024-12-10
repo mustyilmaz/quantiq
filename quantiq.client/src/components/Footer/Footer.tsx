@@ -33,7 +33,7 @@ const Footer = () => {
         <div className={styles.footerSection}>
           <h3>Bizi Takip Edin</h3>
           <div className={styles.socialLinks}>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://github.com/mustyilmaz/quantiq" target="_blank" rel="noopener noreferrer">
               <Github size={24} />
             </a>
           </div>

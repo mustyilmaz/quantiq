@@ -131,35 +131,62 @@ namespace quantiq.Server.Controllers
             return Ok(new { token });
         }
 
-        /* [HttpPost("verify-token")]
-        public async Task<IActionResult> VerifyToken([FromBody] string inputtoken)
+        [HttpGet("verify-token")]
+        public async Task<IActionResult> VerifyToken()
         {
             try
             {
-                var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-                if (string.IsNullOrEmpty(token))
+                var authHeader = Request.Headers["Authorization"].FirstOrDefault();
+                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
                 {
-                    return Unauthorized("Token is required");
+                    return Unauthorized(new { message = "Token bulunamadı" });
                 }
-                var user = await _context.Users.FindAsync(userId);
+
+                var token = authHeader.Substring("Bearer ".Length);
+                var userId = _authService.ValidateJwtToken(token);
+
+                if (!userId.HasValue)
+                {
+                    return Unauthorized(new { message = "Geçersiz token" });
+                }
+
+                var user = await _context.Users
+                    .Select(u => new
+                    {
+                        u.Id,
+                        u.Name,
+                        u.Email,
+                        u.PhoneNumber,
+                        u.CreatedAt,
+                        u.LastLoginAt
+                    })
+                    .FirstOrDefaultAsync(u => u.Id == userId.Value);
+
                 if (user == null)
                 {
-                    return NotFound("User not found");
+                    return NotFound(new { message = "Kullanıcı bulunamadı" });
                 }
-                Console.WriteLine("ne geldi abi şimdi data", user.Id);
+
                 return Ok(new
                 {
-                    id = user.Id,
-                    name = user.Name,
-                    email = user.Email,
-                    phoneNumber = user.PhoneNumber
+                    success = true,
+                    user = new
+                    {
+                        id = user.Id,
+                        name = user.Name,
+                        email = user.Email,
+                        phoneNumber = user.PhoneNumber,
+                        createdAt = user.CreatedAt,
+                        lastLoginAt = user.LastLoginAt
+                    }
                 });
             }
             catch (Exception ex)
             {
-                return Unauthorized("Invalid token");
+                return StatusCode(500, new { message = "Sunucu hatası", error = ex.Message });
             }
-        } */
+        }
+
     }
 
     public class RecaptchaResponse

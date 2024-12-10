@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styles from "./UserLogin.module.css";
 import { authService } from "../authService";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from '../AuthContext';
 
 interface LoginData {
   emailOrPhone: string;
@@ -10,6 +11,7 @@ interface LoginData {
 
 const UserLogin: React.FC = () => {
   const navigate = useNavigate();
+  const { updateAuthStatus } = useAuth();
   const [loginData, setLoginData] = useState<LoginData>({
     emailOrPhone: "",
     password: "",
@@ -20,6 +22,10 @@ const UserLogin: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setLoginData((prev) => ({ ...prev, [id]: value }));
+    if (id === 'emailOrPhone') {
+      const inputType = value.includes('@') ? 'email' : 'text';
+      e.target.type = inputType;
+    }
     setError(null);
   };
 
@@ -33,6 +39,9 @@ const UserLogin: React.FC = () => {
         emailOrPhone: loginData.emailOrPhone,
         password: loginData.password,
       });
+      
+      const userData = await authService.verifyToken();
+      updateAuthStatus(true, userData.user.name || 'User');
       navigate("/user/dashboard");
     } catch (err: any) {
       setError(err.message || "Login failed");
@@ -60,7 +69,7 @@ const UserLogin: React.FC = () => {
                 Email or Phone Number
               </label>
               <input
-                type="email"
+                type="text"
                 id="emailOrPhone"
                 className={styles.formInput}
                 placeholder="Enter your email or phone number"

@@ -65,6 +65,10 @@ export default defineConfig({
                 target,
                 secure: false
             },
+            '^/api/Auth/verify-token': {
+                target,
+                secure: false
+            },
         },
         port: 54375,
         https: {

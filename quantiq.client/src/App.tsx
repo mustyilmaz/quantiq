@@ -17,8 +17,10 @@ import UserHome from './components/UserDashboard/UserHome/UserHome';
 
 //Routes
 import ProtectedRoute from './routes/ProtectedUserRoute';
+import { AuthProvider } from './components/Auth/AuthContext';
 
 import "./App.css";
+
 
 const DashboardLayout = () => {
     return (
@@ -33,24 +35,26 @@ const DashboardLayout = () => {
 
 const App = () => {
     return(
-        <Router>
-            <Navbar/>
-            <Routes>
-                <Route path="*" element={<NotFound />} />
-                <Route path="/" element={<Home />} />
-                <Route path='register' element={<Register />}/>
-                <Route path='user/login' element={<UserLogin />}/>
-                <Route path="/weather-forecast" element={<WeatherForecast />} />
-                <Route path="/commission-calculator" element={<CommissionCalculator />} />
-                <Route path="/user/dashboard/*" element={
-                    <ProtectedRoute>
-                        <DashboardLayout />
-                    </ProtectedRoute>
-                } />
+        <AuthProvider>
+            <Router>
+                <Navbar/>
+                <Routes>
+                    <Route path="*" element={<NotFound />} />
+                    <Route path="/" element={<Home />} />
+                    <Route path='register' element={<Register />}/>
+                    <Route path='user/login' element={<UserLogin />}/>
+                    <Route path="/weather-forecast" element={<WeatherForecast />} />
+                    <Route path="/commission-calculator" element={<CommissionCalculator />} />
+                    <Route path="/user/dashboard/*" element={
+                        <ProtectedRoute>
+                            <DashboardLayout />
+                        </ProtectedRoute>
+                    } />
 
-            </Routes>
-            <Footer/>
-        </Router>
+                </Routes>
+                <Footer/>
+            </Router>
+        </AuthProvider>
     );
 }
 

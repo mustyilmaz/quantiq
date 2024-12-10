@@ -3,9 +3,15 @@ import styles from './UserHome.module.css';
 import { authService } from '../../Auth/authService';
 
 interface UserInfo {
-    name: string;
-    email: string;
-    phoneNumber: string;
+    success: boolean;
+    user: {
+        id: string;
+        name: string;
+        email: string;
+        phoneNumber: string;
+        createdAt: string;
+        lastLoginAt: string;
+    };
 }
 
 const UserHome: React.FC = () => {
@@ -39,16 +45,16 @@ const UserHome: React.FC = () => {
     return (
         <div className={styles.dashboardHome}>
             <div className={styles.welcomeSection}>
-                <h1>Hoş Geldiniz, {userInfo?.name}!</h1>
+                <h1>Hoş Geldiniz, {userInfo?.user.name}!</h1>
                 <div className={styles.userInfo}>
                     <div className={styles.infoCard}>
                         <div className={styles.infoItem}>
                             <span className={styles.label}>E-posta:</span>
-                            <span className={styles.value}>{userInfo?.email}</span>
+                            <span className={styles.value}>{userInfo?.user.email}</span>
                         </div>
                         <div className={styles.infoItem}>
                             <span className={styles.label}>Telefon:</span>
-                            <span className={styles.value}>{userInfo?.phoneNumber}</span>
+                            <span className={styles.value}>{userInfo?.user.phoneNumber}</span>
                         </div>
                     </div>
                 </div>
