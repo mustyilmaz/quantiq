@@ -111,18 +111,53 @@ namespace quantiq.Server.Controllers
         [HttpPost("user-login")]
         public async Task<IActionResult> UserLogin([FromBody] UserLoginDto userLoginDto)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => 
-            u.Email == userLoginDto.EmailOrPhone || 
+            var user = await _context.Users.SingleOrDefaultAsync(u =>
+            u.Email == userLoginDto.EmailOrPhone ||
             u.PhoneNumber == userLoginDto.EmailOrPhone);
 
-            if (user == null){
+            if (user == null)
+            {
                 return NotFound("user not found!");
             }
-            if(!BCrypt.Net.BCrypt.Verify(userLoginDto.Password, user.PasswordHash)){
+            if (!BCrypt.Net.BCrypt.Verify(userLoginDto.Password, user.PasswordHash))
+            {
                 return Unauthorized("Invalid password");
             }
+            //last login update
+            user.LastLogin = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
             var token = _authService.GenerateJwtToken(user);
             return Ok(new { token });
+        }
+
+        [HttpPost("verify-token")]
+        public async Task<IActionResult> VerifyToken([FromBody] string token)
+        {
+            try
+            {
+                var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                if (string.IsNullOrEmpty(token))
+                {
+                    return Unauthorized("Token is required");
+                }
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+                Console.WriteLine("ne geldi abi şimdi data", user.Id);
+                return Ok(new
+                {
+                    id = user.Id,
+                    name = user.Name,
+                    email = user.Email,
+                    phoneNumber = user.PhoneNumber
+                });
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized("Invalid token");
+            }
         }
     }
 

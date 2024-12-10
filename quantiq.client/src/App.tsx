@@ -12,7 +12,23 @@ import WeatherForecast from './components/WeatherForecast/WeatherForecast';
 import Register from './components/Auth/Register/Register';
 import UserLogin from './components/Auth/UserLogin/UserLogin';
 
+//UserDashboard
+import UserHome from './components/UserDashboard/UserHome/UserHome';
+
+//Routes
+import ProtectedRoute from './routes/ProtectedUserRoute';
+
 import "./App.css";
+
+const DashboardLayout = () => {
+    return (
+        <Routes>
+            <Route index element={<UserHome />} />
+            {/* Diğer dashboard sayfaları buraya eklenebilir */}
+            <Route path="*" element={<NotFound />} />
+        </Routes>
+    );
+};
 
 
 const App = () => {
@@ -26,6 +42,12 @@ const App = () => {
                 <Route path='user/login' element={<UserLogin />}/>
                 <Route path="/weather-forecast" element={<WeatherForecast />} />
                 <Route path="/commission-calculator" element={<CommissionCalculator />} />
+                <Route path="/user/dashboard/*" element={
+                    <ProtectedRoute>
+                        <DashboardLayout />
+                    </ProtectedRoute>
+                } />
+
             </Routes>
             <Footer/>
         </Router>

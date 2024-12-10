@@ -33,7 +33,6 @@ const UserLogin: React.FC = () => {
         emailOrPhone: loginData.emailOrPhone,
         password: loginData.password,
       });
-      console.log("Login successful");
       navigate("/user/dashboard");
     } catch (err: any) {
       setError(err.message || "Login failed");

@@ -40,6 +40,22 @@ class AuthService {
     localStorage.removeItem(this.tokenKey);
   }
 
+  async verifyToken(): Promise<any> {
+    try {
+        const token = this.getToken();
+        if (!token) {
+            throw new Error('No token found');
+        }
+
+        const response = await axios.get('/api/Auth/verify-token');
+        console.log("ne geldi abi şimdi data", response.data);
+        return response.data;
+    } catch (error) {
+        this.logout();
+        throw this.handleAuthError(error);
+    }
+}
+
   private handleAuthError(error: any): Error {
     if (axios.isAxiosError(error)) {
       return new Error(
