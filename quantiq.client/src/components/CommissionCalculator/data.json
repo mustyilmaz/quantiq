@@ -1,0 +1,20 @@
+{
+    "commissionRates": [
+      {
+        "platform": "trendyol",
+        "category": "toys",
+        "commission": "15"
+      },
+      {
+        "platform": "trendyol",
+        "category": "tech",
+        "commission": "12"
+      },
+      {
+        "platform": "hepsiburada",
+        "category": "toys",
+        "commission": "23"
+      }
+    ]
+  }
+  
