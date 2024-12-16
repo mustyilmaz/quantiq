@@ -1,0 +1,80 @@
+.userNavbar {
+  width: 250px;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 64px; /* Ana navbar yüksekliği */
+  background-color: white;
+  border-right: 1px solid #eaeaea;
+  padding: 2rem 0;
+}
+
+.navList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navItem {
+  margin-bottom: 0.5rem;
+}
+
+.navLink {
+  display: block;
+  padding: 1rem 2rem;
+  color: #555;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.navLink:hover {
+  background-color: #f8f9fa;
+  color: #667eea;
+  border-left-color: #667eea;
+}
+
+.active {
+  background-color: #f8f9fa;
+  color: #667eea;
+  border-left-color: #667eea;
+  font-weight: 500;
+}
+
+@media screen and (max-width: 768px) {
+  .userNavbar {
+    width: 100%;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid #eaeaea;
+    padding: 1rem;
+  }
+
+  .navList {
+    display: flex;
+    overflow-x: auto;
+  }
+
+  .navItem {
+    margin-bottom: 0;
+    margin-right: 1rem;
+  }
+
+  .navLink {
+    padding: 0.5rem 1rem;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+  }
+
+  .navLink:hover,
+  .active {
+    border-left-color: transparent;
+    border-bottom-color: #667eea;
+  }
+
+  .content {
+    margin-left: 0;
+    padding: 1rem;
+  }
+}

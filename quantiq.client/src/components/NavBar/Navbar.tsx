@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import styles from './Navbar.module.css';
-import { authService } from '../Auth/authService';
-import { useAuth } from '../Auth/AuthContext';
-
+import { useState, useEffect, useRef } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import styles from "./Navbar.module.css";
+import { authService } from "../Auth/authService";
+import { useAuth } from "../Auth/AuthContext";
+import { useTheme } from "../../context/ThemeContext";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -11,6 +11,7 @@ const Navbar = () => {
   const location = useLocation();
   const menuRef = useRef<HTMLLIElement>(null);
   const { isAuthenticated, userName, updateAuthStatus } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   useEffect(() => {
     const handleScroll = () => {
@@ -22,9 +23,9 @@ const Navbar = () => {
       if (token) {
         try {
           const userData = await authService.verifyToken();
-          updateAuthStatus(true, userData.user.name || 'User');
+          updateAuthStatus(true, userData.user.name || "User");
         } catch (error) {
-          updateAuthStatus(false, '');
+          updateAuthStatus(false, "");
         }
       }
     };
@@ -35,48 +36,68 @@ const Navbar = () => {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    document.addEventListener('mousedown', handleClickOutside);
+    window.addEventListener("scroll", handleScroll);
+    document.addEventListener("mousedown", handleClickOutside);
     checkAuthStatus();
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [updateAuthStatus]);
 
   const handleLogout = () => {
     authService.logout();
-    updateAuthStatus(false, '');
+    updateAuthStatus(false, "");
     setIsUserMenuOpen(false);
-    navigate('/user/login');
+    navigate("/user/login");
   };
 
   return (
-    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
+    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={styles.navbarContainer}>
         <Link to="/" className={styles.navbarLogo}>
           Quantiq
         </Link>
         <ul className={styles.navbarMenu}>
           <li className={styles.navbarItem}>
-            <Link to="/" className={`${styles.navbarLink} ${location.pathname === '/' ? styles.active : ''}`}>
+            <Link
+              to="/"
+              className={`${styles.navbarLink} ${
+                location.pathname === "/" ? styles.active : ""
+              }`}
+            >
               Home
             </Link>
           </li>
           <li className={styles.navbarItem}>
-            <Link to="/weather-forecast" className={`${styles.navbarLink} ${location.pathname === '/weather-forecast' ? styles.active : ''}`}>
+            <Link
+              to="/weather-forecast"
+              className={`${styles.navbarLink} ${
+                location.pathname === "/weather-forecast" ? styles.active : ""
+              }`}
+            >
               Test Client-server
             </Link>
           </li>
           <li className={styles.navbarItem}>
-            <Link to="/commission-calculator" className={`${styles.navbarLink} ${location.pathname === '/commission-calculator' ? styles.active : ''}`}>
+            <Link
+              to="/commission-calculator"
+              className={`${styles.navbarLink} ${
+                location.pathname === "/commission-calculator"
+                  ? styles.active
+                  : ""
+              }`}
+            >
               Commission Calculator
             </Link>
           </li>
+          <button onClick={toggleTheme}>
+            {theme === "light" ? "🌙" : "☀️"}
+          </button>
           <li className={styles.navbarItem} ref={menuRef}>
-            <div 
-              className={styles.userMenuTrigger} 
+            <div
+              className={styles.userMenuTrigger}
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
             >
               {isAuthenticated ? (
@@ -89,14 +110,21 @@ const Navbar = () => {
               <div className={styles.userMenu}>
                 {isAuthenticated ? (
                   <>
-                    <Link to="/user/profile" className={styles.menuItem}>Profile</Link>
-                    <Link to="/user/settings" className={styles.menuItem}>Settings</Link>
-                    <button onClick={handleLogout} className={styles.menuItem}>Logout</button>
+                    <Link to="/user" className={styles.menuItem}>
+                      User Dashboard
+                    </Link>
+                    <button onClick={handleLogout} className={styles.menuItem}>
+                      Logout
+                    </button>
                   </>
                 ) : (
                   <>
-                    <Link to="/user/login" className={styles.menuItem}>Sign In</Link>
-                    <Link to="/register" className={styles.menuItem}>Sign Up</Link>
+                    <Link to="/user/login" className={styles.menuItem}>
+                      Sign In
+                    </Link>
+                    <Link to="/register" className={styles.menuItem}>
+                      Sign Up
+                    </Link>
                   </>
                 )}
               </div>

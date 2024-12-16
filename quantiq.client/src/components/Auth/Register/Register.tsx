@@ -151,6 +151,14 @@ const Register = () => {
       <div className={styles.formContainer}>
         <div className={styles.formWrapper}>
           <h1 className={styles.formTitle}>Create an Account</h1>
+          <div className={styles.footerLinks}>
+            <p>
+              Already have an account?{" "}
+              <a href="/user/login" className={styles.loginLink}>
+                Login
+              </a>
+            </p>
+          </div>
           <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.formGroup}>
               <label htmlFor="name" className={styles.formLabel}>

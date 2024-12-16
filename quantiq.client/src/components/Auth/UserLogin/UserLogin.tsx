@@ -50,7 +50,7 @@ const UserLogin: React.FC = () => {
       
       const userData = await authService.verifyToken();
       updateAuthStatus(true, userData.user.name || 'User');
-      navigate("/user/dashboard");
+      navigate("/user/");
     } catch (err: any) {
       setError(err.message || "Login failed");
     } finally {
