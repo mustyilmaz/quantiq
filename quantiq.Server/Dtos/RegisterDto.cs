@@ -9,6 +9,10 @@ namespace quantiq.Server.Dtos
         public string Name { get; set; }
 
         [Required]
+        [StringLength(100)]
+        public string Surname { get; set; }
+
+        [Required]
         [EmailAddress]
         public string Email { get; set; }
 
@@ -17,7 +21,7 @@ namespace quantiq.Server.Dtos
         public string PhoneNumber { get; set; }
 
         [Required]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", 
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
             ErrorMessage = "Password does not meet requirements")]
         public string Password { get; set; }
 
@@ -25,6 +29,7 @@ namespace quantiq.Server.Dtos
         [Compare(nameof(Password), ErrorMessage = "Passwords do not match")]
         public string ConfirmPassword { get; set; }
 
-        public string RecaptchaToken { get; set; }
+        [Required]
+        public string TurnstileToken { get; set; }
     }
 }

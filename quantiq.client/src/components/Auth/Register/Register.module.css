@@ -118,46 +118,67 @@
   background-color: #5a67d8;
 }
 
-.phoneInputContainer :global(.react-tel-input) {
-  width: 100%;
-  display: flex;
+.phoneInputContainer {
+  display: none;
 }
 
-.phoneInputContainer :global(.react-tel-input .form-control) {
+.turnstile {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.formInput[type="tel"] {
+  padding-left: 1rem;
+}
+
+/* Telefon numarası için özel stiller */
+.formInput[type="tel"]::placeholder {
+  color: #999;
+}
+
+.formInput[type="tel"]:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.phoneInputWrapper {
+  display: flex;
+  gap: 0.5rem;
   width: 100%;
+}
+
+.countrySelect {
+  width: 120px;
   padding: 0.75rem;
-  padding-left: 48px;
-  border: 1px solid #000000;
+  border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
-  box-sizing: border-box;
   background-color: rgb(0, 0, 0);
-  color: rgb(0, 0, 0);
+  cursor: pointer;
   transition: border-color 0.3s ease;
 }
 
-.phoneInputContainer :global(.react-tel-input .form-control:focus) {
+.countrySelect:focus {
   outline: none;
-  border-color: #000000;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
 }
 
-.phoneInputContainer :global(.react-tel-input .flag-dropdown) {
-  border: 1px solid #000000 !important;
-  border-radius: 4px 0 0 4px;
-  background-color: black !important;
+.phoneInput {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
 }
 
-.phoneInputContainer :global(.react-tel-input .country-list) {
-  background-color: rgb(0, 0, 0);
-  color: black;
-  border: 1px solid #000000;
+.phoneInput:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
 }
-
-.phoneInputContainer :global(.react-tel-input .country-list .country:hover) {
-  background-color: #000000;
-}
-
 
 @media screen and (max-width: 1024px) {
   .registerPage {
@@ -185,5 +206,14 @@
   .submitButton {
     padding: 0.625rem;
     font-size: 0.9rem;
+  }
+
+  .phoneInputWrapper {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .countrySelect {
+    width: 100%;
   }
 }

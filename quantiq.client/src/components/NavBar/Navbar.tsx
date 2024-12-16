@@ -56,7 +56,7 @@ const Navbar = () => {
     <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
       <div className={styles.navbarContainer}>
         <Link to="/" className={styles.navbarLogo}>
-          HomePage
+          Quantiq
         </Link>
         <ul className={styles.navbarMenu}>
           <li className={styles.navbarItem}>

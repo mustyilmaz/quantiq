@@ -1,7 +1,12 @@
 import React, { useState } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
+import Turnstile from "react-turnstile";
+import {
+  parsePhoneNumberWithError,
+  getCountries,
+  getCountryCallingCode,
+  CountryCode,
+  isValidPhoneNumber,
+} from "libphonenumber-js";
 import { useNavigate } from "react-router-dom";
 
 import styles from "./Register.module.css";
@@ -9,10 +14,11 @@ import styles from "./Register.module.css";
 const Register = () => {
   const [registerData, setRegisterData] = useState({
     name: "",
+    surname: "",
     email: "",
     password: "",
     confirmPassword: "",
-    recaptchaToken: "",
+    turnstileToken: "",
     phoneNumber: "",
   });
 
@@ -24,6 +30,8 @@ const Register = () => {
     specialChar: false,
     passwordMatch: false,
   });
+
+  const [selectedCountry, setSelectedCountry] = useState<CountryCode>("TR");
 
   const validatePassword = (password: string) => {
     return {
@@ -56,12 +64,52 @@ const Register = () => {
     }
   };
 
-  const handleRecaptchaChange = (token: string | null) => {
-    setRegisterData({ ...registerData, recaptchaToken: token || "" });
+  const handleTurnstileCallback = (token: string) => {
+    setRegisterData({ ...registerData, turnstileToken: token });
   };
 
-  const handlePhoneNumberChange = (phoneNumber: string) => {
-    setRegisterData({ ...registerData, phoneNumber });
+  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    try {
+      if (value) {
+        const phoneNumberWithCountry = `+${getCountryCallingCode(
+          selectedCountry
+        )}${value}`;
+
+        if (isValidPhoneNumber(phoneNumberWithCountry, selectedCountry)) {
+          const phoneNumber = parsePhoneNumberWithError(phoneNumberWithCountry);
+
+          setRegisterData((prev) => ({
+            ...prev,
+            phoneNumber: phoneNumber.format("E.164"),
+          }));
+        } else {
+          setRegisterData((prev) => ({
+            ...prev,
+            phoneNumber: value,
+          }));
+        }
+      }
+    } catch (error) {
+      console.error("Phone number parsing error:", error);
+      setRegisterData((prev) => ({
+        ...prev,
+        phoneNumber: value,
+      }));
+    }
+  };
+
+  const isValidPhone = (phone: string): boolean => {
+    try {
+      return isValidPhoneNumber(phone, selectedCountry);
+    } catch {
+      return false;
+    }
+  };
+
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCountry(e.target.value as CountryCode);
   };
 
   const navigate = useNavigate();
@@ -70,8 +118,8 @@ const Register = () => {
 
     const allValidationsPassed = Object.values(validations).every(Boolean);
 
-    if (!registerData.recaptchaToken) {
-      alert("Please complete reCAPTCHA!");
+    if (!registerData.turnstileToken) {
+      alert("Please complete Turnstile!");
       return;
     }
     if (!allValidationsPassed) {
@@ -118,6 +166,20 @@ const Register = () => {
                 required
               />
             </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="surname" className={styles.formLabel}>
+                Surname
+              </label>
+              <input
+                type="text"
+                id="surname"
+                placeholder="Enter your surname"
+                value={registerData.surname}
+                onChange={handleInputChange}
+                className={styles.formInput}
+                required
+              />
+            </div>
 
             <div className={styles.formGroup}>
               <label htmlFor="email" className={styles.formLabel}>
@@ -148,28 +210,48 @@ const Register = () => {
                 required
               />
               <div className={styles.passwordRequirements}>
-                <small 
-                  className={validations.length ? styles.validRequirement : styles.invalidRequirement}
+                <small
+                  className={
+                    validations.length
+                      ? styles.validRequirement
+                      : styles.invalidRequirement
+                  }
                 >
                   ✓ At least 8 characters
                 </small>
-                <small 
-                  className={validations.uppercase ? styles.validRequirement : styles.invalidRequirement}
+                <small
+                  className={
+                    validations.uppercase
+                      ? styles.validRequirement
+                      : styles.invalidRequirement
+                  }
                 >
                   ✓ One uppercase letter
                 </small>
-                <small 
-                  className={validations.lowercase ? styles.validRequirement : styles.invalidRequirement}
+                <small
+                  className={
+                    validations.lowercase
+                      ? styles.validRequirement
+                      : styles.invalidRequirement
+                  }
                 >
                   ✓ One lowercase letter
                 </small>
-                <small 
-                  className={validations.number ? styles.validRequirement : styles.invalidRequirement}
+                <small
+                  className={
+                    validations.number
+                      ? styles.validRequirement
+                      : styles.invalidRequirement
+                  }
                 >
                   ✓ One number
                 </small>
-                <small 
-                  className={validations.specialChar ? styles.validRequirement : styles.invalidRequirement}
+                <small
+                  className={
+                    validations.specialChar
+                      ? styles.validRequirement
+                      : styles.invalidRequirement
+                  }
                 >
                   ✓ One special character
                 </small>
@@ -197,25 +279,43 @@ const Register = () => {
             </div>
 
             <div className={styles.formGroup}>
-              <label htmlFor="phone" className={styles.formLabel}>
-                Telephone Number
+              <label htmlFor="phoneNumber" className={styles.formLabel}>
+                Telefon Numarası
               </label>
-              <PhoneInput
-                country={'tr'}
-                value={registerData.phoneNumber}
-                onChange={handlePhoneNumberChange}
-                inputClass={styles.formInput}
-                containerClass={styles.phoneInputContainer}
-                inputProps={{
-                  id: 'phoneNumber',
-                  required: true,
-                }}
-              />
+              <div className={styles.phoneInputWrapper}>
+                <select
+                  value={selectedCountry}
+                  onChange={handleCountryChange}
+                  className={styles.countrySelect}
+                >
+                  {getCountries().map((country) => (
+                    <option key={country} value={country}>
+                      {country} (+{getCountryCallingCode(country)})
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="tel"
+                  id="phoneNumber"
+                  placeholder="5XX XXX XX XX"
+                  value={registerData.phoneNumber}
+                  onChange={handlePhoneNumberChange}
+                  className={styles.phoneInput}
+                  required
+                />
+              </div>
+              {registerData.phoneNumber &&
+                !isValidPhone(registerData.phoneNumber) && (
+                  <small className={styles.errorMessage}>
+                    Geçerli bir telefon numarası giriniz
+                  </small>
+                )}
             </div>
 
-            <ReCAPTCHA
-              sitekey="6LfsbpQqAAAAAFji4WXnejrtEdI2WF2PY3TgIzy8"
-              onChange={handleRecaptchaChange}
+            <Turnstile
+              sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+              onVerify={handleTurnstileCallback}
+              className={styles.turnstile}
             />
 
             <button type="submit" className={styles.submitButton}>

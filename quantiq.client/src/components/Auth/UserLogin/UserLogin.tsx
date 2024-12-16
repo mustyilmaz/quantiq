@@ -3,10 +3,12 @@ import styles from "./UserLogin.module.css";
 import { authService } from "../authService";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../AuthContext';
+import Turnstile from "react-turnstile";
 
 interface LoginData {
   emailOrPhone: string;
   password: string;
+  turnstileToken: string;
 }
 
 const UserLogin: React.FC = () => {
@@ -15,6 +17,7 @@ const UserLogin: React.FC = () => {
   const [loginData, setLoginData] = useState<LoginData>({
     emailOrPhone: "",
     password: "",
+    turnstileToken: "",
   });
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,6 +32,10 @@ const UserLogin: React.FC = () => {
     setError(null);
   };
 
+  const handleTurnstileCallback = (token: string) => {
+    setLoginData({ ...loginData, turnstileToken: token });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -38,6 +45,7 @@ const UserLogin: React.FC = () => {
       await authService.login({
         emailOrPhone: loginData.emailOrPhone,
         password: loginData.password,
+        turnstileToken: loginData.turnstileToken,
       });
       
       const userData = await authService.verifyToken();
@@ -92,6 +100,11 @@ const UserLogin: React.FC = () => {
                 required
               />
             </div>
+            <Turnstile
+              sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+              onVerify={handleTurnstileCallback}
+              className={styles.turnstile}
+            />
             {error && <div className={styles.errorMessage}>{error}</div>}
             <button
               type="submit"

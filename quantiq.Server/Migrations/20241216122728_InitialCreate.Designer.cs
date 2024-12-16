@@ -12,8 +12,8 @@ using quantiq.Server.Data;
 namespace quantiq.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241206194644_AddInitialMigration")]
-    partial class AddInitialMigration
+    [Migration("20241216122728_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,6 +52,16 @@ namespace quantiq.Server.Migrations
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
 

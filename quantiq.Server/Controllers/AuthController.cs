@@ -30,16 +30,93 @@ namespace quantiq.Server.Controllers
             _authService = authService;
         }
 
+        private async Task<bool> VerifyTurnstile(string token)
+        {
+            try
+            {
+                var secretKey = _configuration["Turnstile:SecretKey"];
+                Console.WriteLine("Secret key: " + secretKey);
+                Console.WriteLine("Token: " + token);
+                if (string.IsNullOrEmpty(secretKey) || string.IsNullOrEmpty(token))
+                {
+                    return false;
+                }
+
+                var client = _clientFactory.CreateClient();
+                var response = await client.PostAsync(
+                    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+                    new FormUrlEncodedContent(new[]
+                    {
+                        new KeyValuePair<string, string>("secret", secretKey),
+                        new KeyValuePair<string, string>("response", token)
+                    })
+                );
+
+                Console.WriteLine("Response: " + response);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"HTTP request failed with status code: {response.StatusCode}");
+                    return false;
+                }
+
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Response content: " + content);
+
+                var turnstileResponse = JsonSerializer.Deserialize<TurnstileResponse>(content, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                var responseJson = JsonSerializer.Serialize(turnstileResponse, new JsonSerializerOptions { WriteIndented = true });
+                Console.WriteLine("Turnstile response: " + responseJson);
+
+                if (turnstileResponse == null)
+                {
+                    Console.WriteLine("Failed to deserialize Turnstile response.");
+                    return false;
+                }
+
+                if (!turnstileResponse.Success)
+                {
+                    Console.WriteLine("Turnstile verification failed.");
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during Turnstile verification: {ex.Message}");
+                return false;
+            }
+        }
+
+        public class TurnstileResponse
+        {
+            public bool Success { get; set; }
+            public string[] ErrorCodes { get; set; } = Array.Empty<string>();
+            public string ChallengeTs { get; set; }
+            public string Hostname { get; set; }
+            public string Action { get; set; }
+            public string Cdata { get; set; }
+            public Metadata Metadata { get; set; }
+        }
+
+        public class Metadata
+        {
+            public bool Interactive { get; set; }
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
-            // Verify reCAPTCHA
-            // if (!await VerifyRecaptcha(registerDto.RecaptchaToken))
-            // {
-            //     return BadRequest("Invalid reCAPTCHA");
-            // }
+            if (!await VerifyTurnstile(registerDto.TurnstileToken))
+            {
+                Console.WriteLine("Turnstile verification failed");
+                return BadRequest("Invalid Turnstile");
+            }
 
-            // Check if user already exists
             if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email || u.PhoneNumber == registerDto.PhoneNumber))
             {
                 return BadRequest("Email or Phone Number already exists");
@@ -49,6 +126,7 @@ namespace quantiq.Server.Controllers
             var user = new User
             {
                 Name = registerDto.Name,
+                Surname = registerDto.Surname,
                 Email = registerDto.Email,
                 PhoneNumber = registerDto.PhoneNumber,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
@@ -61,57 +139,15 @@ namespace quantiq.Server.Controllers
             return Ok(new { message = "Registration successful" });
         }
 
-        private async Task<bool> VerifyRecaptcha(string token)
-        {
-            try
-            {
-                // ReCAPTCHA Secret Key'i almak
-                
-                var secretKey = _configuration["Recaptcha:SecretKey"];
-                if (string.IsNullOrEmpty(secretKey) || string.IsNullOrEmpty(token))
-                {
-                    Console.WriteLine("Secret key or token is missing.");
-                    return false;  // Secret key ya da token yoksa başarısız.
-                }
-
-                // HTTP client oluşturma
-                var client = _clientFactory.CreateClient();
-
-                // POST isteği gönderme
-                var response = await client.PostAsync(
-                    "https://www.google.com/recaptcha/api/siteverify",
-                    new FormUrlEncodedContent(new[]
-                    {
-                new KeyValuePair<string, string>("secret", secretKey),
-                new KeyValuePair<string, string>("response", token)
-                    })
-                );
-
-                // Eğer istek başarısızsa
-                if (!response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine("ReCAPTCHA verification failed.");
-                    return false;
-                }
-
-                // Yanıtı okuma
-                var content = await response.Content.ReadAsStringAsync();
-                var recaptchaResponse = JsonSerializer.Deserialize<RecaptchaResponse>(content);
-
-                // reCAPTCHA doğrulama sonucu
-                return recaptchaResponse?.Success ?? false;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error during reCAPTCHA verification: {ex.Message}");
-                return false;  // Hata durumunda başarısız.
-            }
-        }
-
-
         [HttpPost("user-login")]
         public async Task<IActionResult> UserLogin([FromBody] UserLoginDto userLoginDto)
         {
+            if (!await VerifyTurnstile(userLoginDto.TurnstileToken))
+            {
+                Console.WriteLine("Turnstile verification failed");
+                return BadRequest("Invalid Turnstile");
+            }
+            Console.WriteLine("Turnstile verification passed");
             var user = await _context.Users.SingleOrDefaultAsync(u =>
             u.Email == userLoginDto.EmailOrPhone ||
             u.PhoneNumber == userLoginDto.EmailOrPhone);
@@ -186,11 +222,5 @@ namespace quantiq.Server.Controllers
                 return StatusCode(500, new { message = "Sunucu hatası", error = ex.Message });
             }
         }
-
-    }
-
-    public class RecaptchaResponse
-    {
-        public bool Success { get; set; }
     }
 }

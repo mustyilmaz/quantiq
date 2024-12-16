@@ -3,6 +3,7 @@ import axios from "axios";
 interface LoginCredentials {
   emailOrPhone: string;
   password: string;
+  turnstileToken: string;
 }
 
 interface AuthTokens {
@@ -17,6 +18,7 @@ class AuthService {
       const response = await axios.post<AuthTokens>("/api/Auth/user-login", {
         emailOrPhone: credentials.emailOrPhone,
         password: credentials.password,
+        turnstileToken: credentials.turnstileToken,
       });
 
       const token = response.data.token;

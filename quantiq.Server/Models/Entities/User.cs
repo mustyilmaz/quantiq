@@ -15,6 +15,10 @@ namespace quantiq.Server.Models.Entities
         public string Name { get; set; }
 
         [Required]
+        [StringLength(100)]
+        public string Surname { get; set; }
+
+        [Required]
         [EmailAddress]
         [StringLength(255)]
         public string Email { get; set; }
