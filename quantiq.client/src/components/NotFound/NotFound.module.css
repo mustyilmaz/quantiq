@@ -3,23 +3,23 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f0f2f5;
+  background-color: var(--bg-primary);
   padding: 20px;
 }
 
 .notFoundContent {
   text-align: center;
-  background-color: white;
+  background-color: var(--bg-secondary);
   padding: 40px;
   border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   max-width: 500px;
   width: 100%;
 }
 
 .notFoundTitle {
   font-size: 6rem;
-  color: #3498db;
+  color: var(--accent-color);
   margin-bottom: 20px;
   font-weight: bold;
   letter-spacing: -4px;
@@ -27,29 +27,24 @@
 
 .notFoundMessage {
   font-size: 1.2rem;
-  color: #555;
+  color: var(--text-secondary);
   margin-bottom: 30px;
   line-height: 1.6;
 }
 
 .notFoundBtn {
-  background-color: #3498db;
+  background-color: var(--accent-color);
   color: white;
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
 .notFoundBtn:hover {
-  background-color: #2980b9;
-  transform: translateY(-2px);
-}
-
-.notFoundBtn:active {
-  transform: translateY(1px);
+  background-color: var(--accent-hover);
 }
 
 @media (max-width: 600px) {

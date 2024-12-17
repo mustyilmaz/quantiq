@@ -1,9 +1,13 @@
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 import { Camera, Trophy, Users, ShieldCheck } from 'lucide-react';
 
 import styles from './Home.module.css';
 
 const Home = () => {
+  useEffect(() => {
+    document.title = "Quantiq - E-Commerce Çözümleri";
+  }, []);
   return (
     <div className={styles.homeContainer}>
       <header className={styles.heroSection}>

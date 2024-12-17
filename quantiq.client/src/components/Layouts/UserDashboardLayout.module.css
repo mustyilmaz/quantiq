@@ -2,10 +2,15 @@
   min-height: calc(100vh - 64px);
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
 }
 
 .content {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  background-color: var(--bg-secondary); 
+  border-radius: 8px; 
+  box-shadow: var(--shadow);
 }

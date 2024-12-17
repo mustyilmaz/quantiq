@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Turnstile from "react-turnstile";
 import {
   parsePhoneNumberWithError,
@@ -12,6 +12,9 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Register.module.css";
 
 const Register = () => {
+  useEffect(() => {
+    document.title = "Quantiq - E-Commerce Çözümleri - Kayıt Ol";
+  }, []);
   const [registerData, setRegisterData] = useState({
     name: "",
     surname: "",

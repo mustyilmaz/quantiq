@@ -20,6 +20,7 @@ const UserHome: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        document.title = "Quantiq - E-Commerce Çözümleri - Hoş Geldiniz";
         const fetchUserInfo = async () => {
             try {
                 const userData = await authService.verifyToken();

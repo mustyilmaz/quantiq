@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./UserLogin.module.css";
 import { authService } from "../authService";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,9 @@ interface LoginData {
 }
 
 const UserLogin: React.FC = () => {
+  useEffect(() => {
+    document.title = "Quantiq - E-Commerce Çözümleri - Giriş Yap";
+  }, []);
   const navigate = useNavigate();
   const { updateAuthStatus } = useAuth();
   const [loginData, setLoginData] = useState<LoginData>({

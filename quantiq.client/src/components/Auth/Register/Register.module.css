@@ -1,7 +1,7 @@
 .registerPage {
   display: flex;
   min-height: 100vh;
-  background-color: #f4f4f4;
+  background-color: var(--bg-primary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
@@ -13,7 +13,7 @@
   justify-content: center;
   align-items: center;
   padding: 2rem;
-  background-color: white;
+  background-color: var(--bg-secondary);
   max-width: 50%;
   width: 100%;
 }
@@ -54,19 +54,19 @@
 .formTitle {
   text-align: center;
   margin-bottom: 2rem;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .formLabel {
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #555;
+  color: var(--text-secondary);
 }
 
 .formInput {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--input-border);
   border-radius: 4px;
   font-size: 1rem;
   box-sizing: border-box;
@@ -75,7 +75,7 @@
 
 .formInput:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--accent-color);
   box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
 }
 
@@ -104,7 +104,7 @@
 
 .submitButton {
   width: 100%;
-  background-color: #667eea;
+  background-color: var(--accent-color);
   color: white;
   border: none;
   padding: 0.75rem;
@@ -115,7 +115,7 @@
 }
 
 .submitButton:hover {
-  background-color: #5a67d8;
+  background-color: var(--accent-hover);
 }
 
 .phoneInputContainer {
@@ -132,13 +132,12 @@
   padding-left: 1rem;
 }
 
-/* Telefon numarası için özel stiller */
 .formInput[type="tel"]::placeholder {
   color: #999;
 }
 
 .formInput[type="tel"]:focus {
-  border-color: #667eea;
+  border-color: var(--accent-color);
   box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
 }
 
@@ -151,24 +150,24 @@
 .countrySelect {
   width: 120px;
   padding: 0.75rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--input-border);
   border-radius: 4px;
   font-size: 1rem;
-  background-color: rgb(0, 0, 0);
+  background-color: var(--bg-secondary);
   cursor: pointer;
   transition: border-color 0.3s ease;
 }
 
 .countrySelect:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--accent-color);
   box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
 }
 
 .phoneInput {
   flex: 1;
   padding: 0.75rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--input-border);
   border-radius: 4px;
   font-size: 1rem;
   transition: border-color 0.3s ease;
@@ -176,26 +175,24 @@
 
 .phoneInput:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--accent-color);
   box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
 }
 
 .footerLinks {
-  color: #333;
+  color: var(--text-primary);
   display: flex;
   justify-content: space-between;
   margin-top: 1rem;
 }
 
-.loginLink 
-{
-  color: #667eea;
+.loginLink {
+  color: var(--accent-color);
   text-decoration: none;
   font-size: 0.9rem;
 }
 
-.loginLink:hover 
-{
+.loginLink:hover {
   text-decoration: underline;
 }
 

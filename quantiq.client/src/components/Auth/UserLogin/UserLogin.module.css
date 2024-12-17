@@ -1,7 +1,7 @@
 .loginPage {
   display: flex;
   min-height: 100vh;
-  background-color: #f4f4f4;
+  background-color: var(--bg-primary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
@@ -13,7 +13,7 @@
   justify-content: center;
   align-items: center;
   padding: 2rem;
-  background-color: white;
+  background-color: var(--bg-secondary);
   max-width: 50%;
   width: 100%;
 }
@@ -38,7 +38,7 @@
 .loginTitle {
   text-align: center;
   margin-bottom: 2rem;
-  color: #333;
+  color: var(--text-primary);
   font-size: 2rem;
 }
 
@@ -56,13 +56,13 @@
 .formLabel {
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #555;
+  color: var(--text-secondary);
 }
 
 .formInput {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--input-border);
   border-radius: 4px;
   font-size: 1rem;
   transition: border-color 0.3s ease;
@@ -70,14 +70,14 @@
 
 .formInput:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--accent-color);
   box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
 }
 
 .submitButton {
   width: 100%;
   padding: 0.75rem;
-  background-color: #667eea;
+  background-color: var(--accent-color);
   color: white;
   border: none;
   border-radius: 4px;
@@ -86,7 +86,7 @@
 }
 
 .submitButton:hover {
-  background-color: #5a67d8;
+  background-color: var(--accent-hover);
 }
 
 .submitButton:disabled {
@@ -116,15 +116,15 @@
 .divider::after {
   content: "";
   flex: 1;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .googleButton {
   width: 100%;
   padding: 0.75rem;
-  background-color: white;
-  color: #333;
-  border: 1px solid #ddd;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--input-border);
   border-radius: 4px;
   cursor: pointer;
   display: flex;
@@ -135,7 +135,7 @@
 }
 
 .googleButton:hover {
-  background-color: #f4f4f4;
+  background-color: var(--bg-primary);
 }
 
 .footerLinks {
@@ -146,7 +146,7 @@
 
 .forgotPassword,
 .registerLink {
-  color: #667eea;
+  color: var(--accent-color);
   text-decoration: none;
   font-size: 0.9rem;
 }

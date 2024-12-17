@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./InfoAPI.module.css";
 
 const InfoAPI = () => {
+  useEffect(() => {
+    document.title = "Quantiq - E-Commerce Çözümleri - API Bilgileri";
+  }, []);
   const [apiInfo, setApiInfo] = useState({
     apiKey: "",
     apiSecret: "",

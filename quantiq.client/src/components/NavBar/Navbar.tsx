@@ -4,6 +4,7 @@ import styles from "./Navbar.module.css";
 import { authService } from "../Auth/authService";
 import { useAuth } from "../Auth/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
+import logo from "../../assets/logo.svg";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -57,7 +58,7 @@ const Navbar = () => {
     <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={styles.navbarContainer}>
         <Link to="/" className={styles.navbarLogo}>
-          Quantiq
+          <img src={logo} alt="Quantiq" className={styles.logoImage} />
         </Link>
         <ul className={styles.navbarMenu}>
           <li className={styles.navbarItem}>

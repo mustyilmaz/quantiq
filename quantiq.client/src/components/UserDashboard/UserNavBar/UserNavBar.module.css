@@ -4,40 +4,30 @@
   position: fixed;
   left: 0;
   top: 64px; /* Ana navbar yüksekliği */
-  background-color: white;
-  border-right: 1px solid #eaeaea;
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border-color);
   padding: 2rem 0;
-}
-
-.navList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.navItem {
-  margin-bottom: 0.5rem;
 }
 
 .navLink {
   display: block;
   padding: 1rem 2rem;
-  color: #555;
+  color: var(--text-secondary);
   text-decoration: none;
   transition: all 0.3s ease;
   border-left: 3px solid transparent;
 }
 
 .navLink:hover {
-  background-color: #f8f9fa;
-  color: #667eea;
-  border-left-color: #667eea;
+  background-color: var(--bg-primary);
+  color: var(--accent-color);
+  border-left-color: var(--accent-color);
 }
 
 .active {
-  background-color: #f8f9fa;
-  color: #667eea;
-  border-left-color: #667eea;
+  background-color: var(--bg-primary);
+  color: var(--accent-color);
+  border-left-color: var(--accent-color);
   font-weight: 500;
 }
 
