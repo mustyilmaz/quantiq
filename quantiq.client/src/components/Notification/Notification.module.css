@@ -1,0 +1,27 @@
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.5s ease-in-out;
+    z-index: 1000;
+  }
+  
+  .success {
+    background-color: #48bb78; /* Tailwind CSS bg-green-500 */
+    color: white;
+  }
+  
+  .error {
+    background-color: #f56565; /* Tailwind CSS bg-red-500 */
+    color: white;
+  }
+  
+  .closeButton {
+    margin-top: 8px;
+    color: white;
+    text-decoration: underline;
+    cursor: pointer;
+  }

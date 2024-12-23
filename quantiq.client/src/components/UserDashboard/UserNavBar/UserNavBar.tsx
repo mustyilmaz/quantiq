@@ -17,6 +17,14 @@ const UserNavbar = () => {
         </li>
         <li className={styles.navItem}>
           <Link 
+            to="/user/change-password"
+            className={`${styles.navLink} ${location.pathname === '/user/change-password' ? styles.active : ''}`}
+          >
+            Change Password
+          </Link>
+        </li>
+        <li className={styles.navItem}>
+          <Link 
             to="/user/api-information"
             className={`${styles.navLink} ${location.pathname === '/user/api-information' ? styles.active : ''}`}
           >

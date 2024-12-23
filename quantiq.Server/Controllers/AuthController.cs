@@ -167,6 +167,38 @@ namespace quantiq.Server.Controllers
             return Ok(new { token });
         }
 
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == changePasswordDto.UserId);
+            if (user == null)
+            {
+                return NotFound(new { message = "Kullanıcı bulunamadı." });
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(changePasswordDto.CurrentPassword, user.PasswordHash))
+            {
+                return Unauthorized(new { message = "Mevcut şifre yanlış." });
+            }
+
+            if (changePasswordDto.NewPassword == changePasswordDto.CurrentPassword)
+            {
+                return BadRequest(new { message = "Yeni şifre mevcut şifre ile aynı olamaz." });
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(changePasswordDto.NewPassword);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Şifre başarıyla değiştirildi." }); // Başarı mesajı eklendi
+        }
+
+        public class ChangePasswordDto
+        {
+            public string CurrentPassword { get; set; }
+            public string NewPassword { get; set; }
+            public int UserId { get; set; } // Kullanıcı ID'si
+        }
+
         [HttpGet("verify-token")]
         public async Task<IActionResult> VerifyToken()
         {
