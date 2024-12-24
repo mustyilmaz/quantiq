@@ -35,8 +35,7 @@ namespace quantiq.Server.Controllers
             try
             {
                 var secretKey = _configuration["Turnstile:SecretKey"];
-                Console.WriteLine("Secret key: " + secretKey);
-                Console.WriteLine("Token: " + token);
+                
                 if (string.IsNullOrEmpty(secretKey) || string.IsNullOrEmpty(token))
                 {
                     return false;
@@ -52,8 +51,6 @@ namespace quantiq.Server.Controllers
                     })
                 );
 
-                Console.WriteLine("Response: " + response);
-
                 if (!response.IsSuccessStatusCode)
                 {
                     Console.WriteLine($"HTTP request failed with status code: {response.StatusCode}");
@@ -61,7 +58,7 @@ namespace quantiq.Server.Controllers
                 }
 
                 var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("Response content: " + content);
+    
 
                 var turnstileResponse = JsonSerializer.Deserialize<TurnstileResponse>(content, new JsonSerializerOptions
                 {
@@ -69,7 +66,7 @@ namespace quantiq.Server.Controllers
                 });
 
                 var responseJson = JsonSerializer.Serialize(turnstileResponse, new JsonSerializerOptions { WriteIndented = true });
-                Console.WriteLine("Turnstile response: " + responseJson);
+
 
                 if (turnstileResponse == null)
                 {
@@ -96,11 +93,11 @@ namespace quantiq.Server.Controllers
         {
             public bool Success { get; set; }
             public string[] ErrorCodes { get; set; } = Array.Empty<string>();
-            public string ChallengeTs { get; set; }
-            public string Hostname { get; set; }
-            public string Action { get; set; }
-            public string Cdata { get; set; }
-            public Metadata Metadata { get; set; }
+            public string ChallengeTs { get; set; } = "";
+            public string Hostname { get; set; } = "";
+            public string Action { get; set; } = "";
+            public string Cdata { get; set; } = "";
+            public Metadata Metadata { get; set; } = new Metadata();
         }
 
         public class Metadata
@@ -147,7 +144,6 @@ namespace quantiq.Server.Controllers
                 Console.WriteLine("Turnstile verification failed");
                 return BadRequest("Invalid Turnstile");
             }
-            Console.WriteLine("Turnstile verification passed");
             var user = await _context.Users.SingleOrDefaultAsync(u =>
             u.Email == userLoginDto.EmailOrPhone ||
             u.PhoneNumber == userLoginDto.EmailOrPhone);
@@ -170,38 +166,54 @@ namespace quantiq.Server.Controllers
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == changePasswordDto.UserId);
+            var authToken = Request.Headers["Authorization"].FirstOrDefault();
+            if (string.IsNullOrEmpty(authToken) || !authToken.StartsWith("Bearer "))
+            {
+                return Unauthorized(new { message = "Token bulunamadı" });
+            }
+            var token = authToken.Substring("Bearer ".Length);
+            var userId = _authService.ValidateJwtToken(token);
+            if (!userId.HasValue)
+            {
+                return Unauthorized(new { message = "Geçersiz token" });
+            }
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == userId.Value);
             if (user == null)
             {
-                return NotFound(new { message = "Kullanıcı bulunamadı." });
+                return NotFound(new { message = "Kullanıcı bulunamadı. Destek ile iletişime geçiniz." });
             }
 
             if (!BCrypt.Net.BCrypt.Verify(changePasswordDto.CurrentPassword, user.PasswordHash))
             {
-                return Unauthorized(new { message = "Mevcut şifre yanlış." });
+                return Unauthorized(new { message = "Mevcut şifre yanlış. Lütfen tekrar deneyiniz." });
             }
 
             if (changePasswordDto.NewPassword == changePasswordDto.CurrentPassword)
             {
-                return BadRequest(new { message = "Yeni şifre mevcut şifre ile aynı olamaz." });
+                return BadRequest(new { message = "Yeni şifre mevcut şifre ile aynı olamaz. Lütfen farklı bir şifre giriniz." });
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Geçersiz şifre formatı! Şifre en az 8 karakter uzunluğunda olmalıdır ve en az bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir." });
+            }
+
+            // Şifre karmaşıklığını kontrol et
+            if (changePasswordDto.NewPassword.Length < 8)
+            {
+                return BadRequest(new { message = "Yeni şifre en az 8 karakter olmalıdır. Şifre en az bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir." });
             }
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(changePasswordDto.NewPassword);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Şifre başarıyla değiştirildi." }); // Başarı mesajı eklendi
-        }
-
-        public class ChangePasswordDto
-        {
-            public string CurrentPassword { get; set; }
-            public string NewPassword { get; set; }
-            public int UserId { get; set; } // Kullanıcı ID'si
+            return Ok(new { message = "Şifreniz başarıyla değiştirildi." }); 
         }
 
         [HttpGet("verify-token")]
         public async Task<IActionResult> VerifyToken()
         {
+            Console.WriteLine("VerifyToken method called");
             try
             {
                 var authHeader = Request.Headers["Authorization"].FirstOrDefault();
@@ -209,6 +221,7 @@ namespace quantiq.Server.Controllers
                 {
                     return Unauthorized(new { message = "Token bulunamadı" });
                 }
+                Console.WriteLine("Token found");
 
                 var token = authHeader.Substring("Bearer ".Length);
                 var userId = _authService.ValidateJwtToken(token);
@@ -229,12 +242,11 @@ namespace quantiq.Server.Controllers
                         u.LastLoginAt
                     })
                     .FirstOrDefaultAsync(u => u.Id == userId.Value);
-
+                
                 if (user == null)
                 {
                     return NotFound(new { message = "Kullanıcı bulunamadı" });
                 }
-
                 return Ok(new
                 {
                     success = true,

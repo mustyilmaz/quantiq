@@ -8,8 +8,7 @@ import NotFound from "./components/NotFound/NotFound";
 import Home from "./components/Home/Home";
 import CommissionCalculator from "./components/CommissionCalculator/CommissionCalculator";
 
-//InitialPage
-import WeatherForecast from "./components/WeatherForecast/WeatherForecast";
+//Auth
 import Register from "./components/Auth/Register/Register";
 import UserLogin from "./components/Auth/UserLogin/UserLogin";
 
@@ -20,7 +19,7 @@ import ChangePassword from "./components/UserDashboard/ChangePassword/ChangePass
 import InfoAPI from "./components/UserDashboard/InfoAPI/InfoAPI";
 //Routes
 import ProtectedRoute from "./routes/ProtectedUserRoute";
-import { AuthProvider } from "./components/Auth/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import "./App.css";
 
@@ -49,7 +48,6 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="register" element={<Register />} />
             <Route path="user/login" element={<UserLogin />} />
-            <Route path="/weather-forecast" element={<WeatherForecast />} />
             <Route
               path="/commission-calculator"
               element={<CommissionCalculator />}

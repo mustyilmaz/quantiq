@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './UserHome.module.css';
-import { authService } from '../../Auth/authService';
+import { authService } from '../../../services/authService';
 
 interface UserInfo {
     success: boolean;
@@ -26,6 +26,7 @@ const UserHome: React.FC = () => {
                 const userData = await authService.verifyToken();
                 setUserInfo(userData);
             } catch (err) {
+                console.error(err);
                 setError('Kullanıcı bilgileri alınamadı');
             } finally {
                 setLoading(false);

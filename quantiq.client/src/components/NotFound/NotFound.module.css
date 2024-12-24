@@ -3,60 +3,152 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: var(--bg-primary);
-  padding: 20px;
+  background: linear-gradient(135deg, 
+    var(--theme-gradient-start, #13123F) 0%, 
+    var(--theme-gradient-end, #1B1B42) 100%);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
 }
 
 .notFoundContent {
   text-align: center;
-  background-color: var(--bg-secondary);
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  max-width: 500px;
+  background: rgba(var(--bg-secondary-rgb), 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 4rem 3rem;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 600px;
   width: 100%;
+  position: relative;
+  z-index: 2;
+  animation: fadeInUp 0.8s ease;
 }
 
 .notFoundTitle {
-  font-size: 6rem;
-  color: var(--accent-color);
-  margin-bottom: 20px;
-  font-weight: bold;
+  font-size: 8rem;
+  background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1.5rem;
+  font-weight: 800;
   letter-spacing: -4px;
+  line-height: 1;
+  animation: pulse 2s infinite;
 }
 
 .notFoundMessage {
-  font-size: 1.2rem;
-  color: var(--text-secondary);
-  margin-bottom: 30px;
+  font-size: 1.4rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2.5rem;
   line-height: 1.6;
+  font-weight: 500;
 }
 
 .notFoundBtn {
-  background-color: var(--accent-color);
+  background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+.notFoundBtn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, 
+    rgba(255, 255, 255, 0.1), 
+    rgba(255, 255, 255, 0.2));
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
 }
 
 .notFoundBtn:hover {
-  background-color: var(--accent-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
-@media (max-width: 600px) {
+.notFoundBtn:hover::before {
+  transform: translateX(0);
+}
+
+/* Animasyonlar */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Responsive Tasarım */
+@media (max-width: 768px) {
+  .notFoundTitle {
+    font-size: 6rem;
+  }
+
+  .notFoundMessage {
+    font-size: 1.2rem;
+  }
+
+  .notFoundContent {
+    padding: 3rem 2rem;
+  }
+}
+
+@media (max-width: 480px) {
   .notFoundTitle {
     font-size: 4rem;
   }
 
   .notFoundMessage {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
   .notFoundContent {
-    padding: 30px;
+    padding: 2.5rem 1.5rem;
   }
+
+  .notFoundBtn {
+    width: 100%;
+    padding: 1rem;
+  }
+}
+
+/* Dark Mode Uyumluluğu */
+[data-theme="dark"] .notFoundContainer {
+  --theme-gradient-start: #0a0a1a;
+  --theme-gradient-end: #141428;
+}
+
+[data-theme="dark"] .notFoundContent {
+  background: rgba(45, 45, 45, 0.2);
 }

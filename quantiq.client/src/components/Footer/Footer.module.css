@@ -1,8 +1,10 @@
 .footer {
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
-  padding: 3rem 0 1rem 0;
+  background: linear-gradient(135deg, #13123F 0%, #1B1B42 100%);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 5rem 0 2rem 0;
   margin-top: auto;
+  position: relative;
+  overflow: hidden;
 }
 
 .footerContainer {
@@ -11,18 +13,25 @@
   padding: 0 2rem;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
+  gap: 3rem;
+  position: relative;
+  z-index: 2;
 }
 
 .footerSection h3 {
-  color: var(--accent-color);
-  margin-bottom: 1.2rem;
-  font-size: 1.2rem;
+  background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .footerSection p {
-  line-height: 1.6;
-  opacity: 0.8;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
 }
 
 .footerSection ul {
@@ -31,54 +40,181 @@
 }
 
 .footerSection ul li {
-  margin-bottom: 0.8rem;
+  margin-bottom: 1rem;
 }
 
 .footerSection ul li a {
-  color: var(--text-primary);
+  color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
+  display: inline-block;
+  position: relative;
+}
+
+.footerSection ul li a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+  transition: width 0.3s ease;
 }
 
 .footerSection ul li a:hover {
-  color: var(--accent-color);
+  color: #ffffff;
+}
+
+.footerSection ul li a:hover::after {
+  width: 100%;
 }
 
 .contactList li {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease;
+}
+
+.contactList li:hover {
+  color: #ffffff;
 }
 
 .socialLinks {
   display: flex;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
 .socialLinks a {
-  color: var(--text-primary);
-  transition: color 0.3s ease;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+  padding: 0.8rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .socialLinks a:hover {
-  color: var(--accent-color);
+  color: #ffffff;
+  background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(255, 107, 107, 0.2);
 }
 
 .footerBottom {
   text-align: center;
-  margin-top: 2rem;
+  margin-top: 4rem;
   padding-top: 2rem;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
 }
 
+/* Responsive Tasarım */
 @media (max-width: 1024px) {
   .footerContainer {
     grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
   }
 }
 
 @media (max-width: 768px) {
+  .footer {
+    padding: 4rem 0 2rem 0;
+  }
+
   .footerContainer {
     grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footerSection {
+    text-align: center;
+  }
+
+  .contactList li {
+    justify-content: center;
+  }
+
+  .socialLinks {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 3rem 0 1.5rem 0;
+  }
+
+  .footerSection h3 {
+    font-size: 1.2rem;
+  }
+}
+
+.menuIcon {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.footerBottomContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+.footerBottomLinks {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.footerBottomLinks a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footerBottomLinks a:hover {
+  color: #ffffff;
+}
+
+.contactList li {
+  display: flex;
+  gap: 1rem;
+}
+
+.contactList li div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.contactList li strong {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.contactList li p {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .footerBottomContent {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .footerBottomLinks {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 }

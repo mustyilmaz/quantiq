@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styles from "./UserLogin.module.css";
-import { authService } from "../authService";
+import { authService } from "../../../services/authService";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../../../hooks/useAuth';
 import Turnstile from "react-turnstile";
 
 interface LoginData {
@@ -11,10 +11,15 @@ interface LoginData {
   turnstileToken: string;
 }
 
+interface LoginError {
+  message: string;
+}
+
 const UserLogin: React.FC = () => {
   useEffect(() => {
     document.title = "Quantiq - E-Commerce Çözümleri - Giriş Yap";
   }, []);
+
   const navigate = useNavigate();
   const { updateAuthStatus } = useAuth();
   const [loginData, setLoginData] = useState<LoginData>({
@@ -45,17 +50,26 @@ const UserLogin: React.FC = () => {
     setError(null);
 
     try {
-      await authService.login({
-        emailOrPhone: loginData.emailOrPhone,
-        password: loginData.password,
-        turnstileToken: loginData.turnstileToken,
-      });
+      const response = await authService.login(
+        loginData.emailOrPhone,
+        loginData.password,
+        loginData.turnstileToken
+      );
       
-      const userData = await authService.verifyToken();
-      updateAuthStatus(true, userData.user.name || 'User');
-      navigate("/user/");
-    } catch (err: any) {
-      setError(err.message || "Login failed");
+      if (response.success) {
+        const verifyResponse = await authService.verifyToken();
+        if (verifyResponse.success && verifyResponse.user) {
+          updateAuthStatus(true, verifyResponse.user);
+          navigate("/user/");
+        } else {
+          setError("Kullanıcı bilgileri alınamadı");
+        }
+      } else {
+        setError(response.error || "Giriş başarısız oldu");
+      }
+    } catch (error) {
+      const loginError = error as LoginError;
+      setError(loginError.message || "Giriş başarısız oldu");
     } finally {
       setIsLoading(false);
     }
@@ -64,8 +78,9 @@ const UserLogin: React.FC = () => {
   const handleGoogleLogin = async () => {
     try {
       window.location.href = "/api/Auth/google-login";
-    } catch (err) {
-      setError("Google login failed");
+    } catch (error) {
+      const loginError = error as LoginError;
+      setError(loginError.message || "Google ile giriş başarısız oldu");
     }
   };
 

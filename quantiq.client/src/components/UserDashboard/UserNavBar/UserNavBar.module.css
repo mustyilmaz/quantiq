@@ -1,21 +1,52 @@
 .userNavbar {
-  width: 250px;
   height: 100%;
   position: fixed;
   left: 0;
-  top: 64px; /* Ana navbar yüksekliği */
+  top: 64px;
   background-color: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
   padding: 2rem 0;
+  transition: width 0.3s ease;
+  width: 60px; /* Kapalı durumdaki genişlik */
+}
+
+.userNavbar.expanded {
+  width: 250px; /* Açık durumdaki genişlik */
+}
+
+.navList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.navItem {
+  white-space: nowrap;
 }
 
 .navLink {
-  display: block;
-  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  padding: 1rem;
   color: var(--text-secondary);
   text-decoration: none;
   transition: all 0.3s ease;
   border-left: 3px solid transparent;
+}
+
+.icon {
+  min-width: 24px;
+  margin-right: 1rem;
+}
+
+.linkText {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.expanded .linkText {
+  opacity: 1;
 }
 
 .navLink:hover {

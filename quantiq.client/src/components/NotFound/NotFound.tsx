@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 const NotFound = () => {
   useEffect(() => {
-    document.title = "Page Not Found - 404";
+    document.title = "Page Not Found - 404 - Quantiq";
   }, []);
 
   return (
@@ -23,7 +23,7 @@ const NotFound = () => {
           404
         </motion.h1>
         <p className={styles.notFoundMessage}>
-          Oops! The page you're looking for doesn't exist. But don't worry, you can find your way back.
+          Böyle bir sayfa bulunamadı. Sayfa kaldırılmış veya değiştirilmiş olabilir.
         </p>
         <motion.button
           className={styles.notFoundBtn}
@@ -31,7 +31,7 @@ const NotFound = () => {
           whileTap={{ scale: 0.9 }}
           onClick={() => window.location.href = '/'}
         >
-          Go Back to Home
+          Anasayfaya git
         </motion.button>
       </motion.div>
     </div>

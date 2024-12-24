@@ -9,6 +9,10 @@
   --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   --input-bg: #ffffff;
   --input-border: #ddd;
+  --success-bg: #f0fff4;
+  --success-border: #48bb78;
+  --error-bg: #fff5f5;
+  --error-border: #f56565;
 }
 
 :root[data-theme="dark"] {
@@ -22,4 +26,8 @@
   --shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   --input-bg: #333333;
   --input-border: #404040;
+  --success-bg: rgba(56, 161, 105, 0.2);
+  --success-border: #38a169;
+  --error-bg: rgba(229, 62, 62, 0.2);
+  --error-border: #e53e3e;
 }

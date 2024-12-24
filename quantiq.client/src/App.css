@@ -1,3 +1,47 @@
+:root {
+  /* Light mode variables */
+  --bg-primary-light: #ffffff;
+  --bg-secondary-light: #f8f9fa;
+  --text-primary-light: #2d3748;
+  --text-secondary-light: #4a5568;
+  --accent-color-light: #667eea;
+  --border-color-light: #e2e8f0;
+  --hover-bg-light: #edf2f7;
+
+  /* Dark mode variables */
+  --bg-primary-dark: #1a202c;
+  --bg-secondary-dark: #2d3748;
+  --text-primary-dark: #f7fafc;
+  --text-secondary-dark: #cbd5e0;
+  --accent-color-dark: #7f9cf5;
+  --border-color-dark: #4a5568;
+  --hover-bg-dark: #2d3748;
+}
+
+/* Light mode (varsayılan) */
+:root {
+  --bg-primary: var(--bg-primary-light);
+  --bg-secondary: var(--bg-secondary-light);
+  --text-primary: var(--text-primary-light);
+  --text-secondary: var(--text-secondary-light);
+  --accent-color: var(--accent-color-light);
+  --border-color: var(--border-color-light);
+  --hover-bg: var(--hover-bg-light);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: var(--bg-primary-dark);
+    --bg-secondary: var(--bg-secondary-dark);
+    --text-primary: var(--text-primary-dark);
+    --text-secondary: var(--text-secondary-dark);
+    --accent-color: var(--accent-color-dark);
+    --border-color: var(--border-color-dark);
+    --hover-bg: var(--hover-bg-dark);
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -9,6 +53,9 @@ body {
     "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 main {
@@ -20,9 +67,43 @@ main {
 
 a {
   text-decoration: none;
-  color: inherit;
+  color: var(--accent-color);
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--text-primary);
 }
 
 button {
   cursor: pointer;
+  background-color: var(--accent-color);
+  color: var(--bg-primary);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* Scrollbar stilleri */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
 }

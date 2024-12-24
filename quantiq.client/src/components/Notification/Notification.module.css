@@ -1,27 +1,58 @@
 .notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 16px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: opacity 0.5s ease-in-out;
-    z-index: 1000;
-  }
-  
-  .success {
-    background-color: #48bb78; /* Tailwind CSS bg-green-500 */
-    color: white;
-  }
-  
-  .error {
-    background-color: #f56565; /* Tailwind CSS bg-red-500 */
-    color: white;
-  }
-  
-  .closeButton {
-    margin-top: 8px;
-    color: white;
-    text-decoration: underline;
-    cursor: pointer;
-  }
+  position: fixed;
+  top: 20px;
+  right: -300px;
+  width: 300px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease-in-out;
+  z-index: 1000;
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notification.show {
+  right: 20px;
+  opacity: 1;
+}
+
+.success {
+  background-color: var(--success-bg);
+  border-left: 4px solid var(--success-border);
+}
+
+.error {
+  background-color: var(--error-bg);
+  border-left: 4px solid var(--error-border);
+}
+
+.message {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.countdown {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.closeButton {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s ease;
+}
+
+.closeButton:hover {
+  color: var(--text-primary);
+}

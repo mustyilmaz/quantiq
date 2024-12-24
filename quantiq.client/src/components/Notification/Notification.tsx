@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import styles from './Notification.module.css';
 
 interface NotificationProps {
   message: string;
@@ -7,23 +8,40 @@ interface NotificationProps {
 }
 
 const Notification: React.FC<NotificationProps> = ({ message, type, onClose }) => {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onClose();
-    }, 10000); 
+  const [countdown, setCountdown] = useState(10);
+  const [isVisible, setIsVisible] = useState(true);
 
-    return () => clearTimeout(timer); 
-  }, [onClose]);
+  useEffect(() => {
+    // Gösterme animasyonu için
+    const showTimer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100);
+
+    // Geri sayım için
+    const countdownTimer = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+
+    if (countdown === 0) {
+      setIsVisible(false);
+      setTimeout(onClose, 300); // Kapanma animasyonundan sonra kaldır
+    }
+
+    return () => {
+      clearTimeout(showTimer);
+      clearInterval(countdownTimer);
+    };
+  }, [countdown, onClose]);
 
   return (
     <div
-      className={`fixed top-5 right-5 p-4 rounded shadow-lg transition-transform transform ${
-        type === 'success' ? 'bg-green-500' : 'bg-red-500'
+      className={`${styles.notification} ${type === 'success' ? styles.success : styles.error} ${
+        isVisible ? styles.show : ''
       }`}
-      style={{ zIndex: 1000, opacity: 1, transition: 'opacity 0.5s ease-in-out' }}
     >
-      <p className="text-white">{message}</p>
-      <button onClick={onClose} className="text-white mt-2 underline">
+      <p className={styles.message}>{message}</p>
+      <p className={styles.countdown}>Otomatik kapanış: {countdown}s</p>
+      <button onClick={onClose} className={styles.closeButton}>
         Kapat
       </button>
     </div>
