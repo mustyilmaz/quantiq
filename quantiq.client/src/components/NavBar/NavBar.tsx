@@ -1,137 +1,151 @@
-import { useState, useEffect, useRef } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import styles from "./Navbar.module.css";
-import { authService } from "../Auth/authService";
-import { useAuth } from "../Auth/AuthContext";
-import { useTheme } from "../../context/ThemeContext";
-import logo from "../../assets/logo.svg";
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
+import { authService } from '../../services/authService';
+import { useTheme } from '../../context/ThemeContext';
+import { Menu, X, Sun, Moon, ChevronDown } from 'lucide-react';
+import styles from './Navbar.module.css';
+import logo from '../../assets/logo.svg';
 
 const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const location = useLocation();
-  const menuRef = useRef<HTMLLIElement>(null);
-  const { isAuthenticated, userName, updateAuthStatus } = useAuth();
+  const auth = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const navigate = useNavigate();
+
+  // Scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 20);
     };
 
-    const checkAuthStatus = async () => {
-      const token = authService.getToken();
-      if (token) {
-        try {
-          const userData = await authService.verifyToken();
-          updateAuthStatus(true, userData.user.name || "User");
-        } catch (error) {
-          updateAuthStatus(false, "");
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Auth durumunu kontrol et
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = localStorage.getItem('token');
+      if (token && !auth.isAuthenticated) {
+        // Token var ama auth durumu false ise yeniden kontrol et
+        const response = await authService.verifyToken();
+        if (response.success && response.user) {
+          auth.updateAuthStatus(true, response.user);
+        } else {
+          localStorage.removeItem('token');
         }
       }
     };
 
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsUserMenuOpen(false);
-      }
-    };
+    checkToken();
+  }, [auth.isAuthenticated]); // auth durumu değiştiğinde kontrol et
 
-    window.addEventListener("scroll", handleScroll);
-    document.addEventListener("mousedown", handleClickOutside);
-    checkAuthStatus();
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [updateAuthStatus]);
-
-  const handleLogout = () => {
-    authService.logout();
-    updateAuthStatus(false, "");
-    setIsUserMenuOpen(false);
-    navigate("/user/login");
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
+  // Loading durumunda minimal navbar göster
+  if (auth.isLoading) {
+    return (
+      <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
+        <div className={styles.navContainer}>
+          <Link to="/" className={styles.logoContainer}>
+            <img src={logo} alt="Quantiq Logo" className={styles.logo} />
+          </Link>
+        </div>
+      </nav>
+    );
+  }
+
   return (
-    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
-      <div className={styles.navbarContainer}>
-        <Link to="/" className={styles.navbarLogo}>
-          <img src={logo} alt="Quantiq" className={styles.logoImage} />
+    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
+      <div className={styles.navContainer}>
+        <Link to="/" className={styles.logoContainer}>
+          <img src={logo} alt="Quantiq Logo" className={styles.logo} />
         </Link>
-        <ul className={styles.navbarMenu}>
-          <li className={styles.navbarItem}>
-            <Link
-              to="/"
-              className={`${styles.navbarLink} ${
-                location.pathname === "/" ? styles.active : ""
-              }`}
+
+        <div className={styles.menuToggle} onClick={toggleMenu}>
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </div>
+
+        <div className={`${styles.navContent} ${isMenuOpen ? styles.active : ''}`}>
+          <ul className={styles.navLinks}>
+            <li>
+              <Link 
+                to="/" 
+                className={location.pathname === '/' ? styles.active : ''}
+                onClick={closeMenu}
+              >
+                Ana Sayfa
+              </Link>
+            </li>
+            <li className={styles.dropdownContainer}>
+              <button 
+                className={styles.dropdownTrigger}
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
+                Çözümler <ChevronDown size={16} />
+              </button>
+              <div className={`${styles.dropdown} ${isDropdownOpen ? styles.show : ''}`}>
+                <Link to="/solutions/e-commerce" onClick={closeMenu}>E-Ticaret</Link>
+                <Link to="/solutions/marketplace" onClick={closeMenu}>Pazar Yeri</Link>
+                <Link to="/solutions/analytics" onClick={closeMenu}>Analitik</Link>
+              </div>
+            </li>
+            <li>
+              <Link 
+                to="/pricing" 
+                className={location.pathname === '/pricing' ? styles.active : ''}
+                onClick={closeMenu}
+              >
+                Fiyatlandırma
+              </Link>
+            </li>
+            <li>
+              <Link 
+                to="/contact" 
+                className={location.pathname === '/contact' ? styles.active : ''}
+                onClick={closeMenu}
+              >
+                İletişim
+              </Link>
+            </li>
+          </ul>
+
+          <div className={styles.navActions}>
+            <button 
+              className={styles.themeToggle} 
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
             >
-              Home
-            </Link>
-          </li>
-          <li className={styles.navbarItem}>
-            <Link
-              to="/weather-forecast"
-              className={`${styles.navbarLink} ${
-                location.pathname === "/weather-forecast" ? styles.active : ""
-              }`}
-            >
-              Test Client-server
-            </Link>
-          </li>
-          <li className={styles.navbarItem}>
-            <Link
-              to="/commission-calculator"
-              className={`${styles.navbarLink} ${
-                location.pathname === "/commission-calculator"
-                  ? styles.active
-                  : ""
-              }`}
-            >
-              Commission Calculator
-            </Link>
-          </li>
-          <button onClick={toggleTheme}>
-            {theme === "light" ? "🌙" : "☀️"}
-          </button>
-          <li className={styles.navbarItem} ref={menuRef}>
-            <div
-              className={styles.userMenuTrigger}
-              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-            >
-              {isAuthenticated ? (
-                <span className={styles.userName}>My Account - {userName}</span>
-              ) : (
-                <span>Sign In / Sign Up</span>
-              )}
-            </div>
-            {isUserMenuOpen && (
+              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+            </button>
+
+            {auth.isAuthenticated && auth.user ? (
               <div className={styles.userMenu}>
-                {isAuthenticated ? (
-                  <>
-                    <Link to="/user" className={styles.menuItem}>
-                      User Dashboard
-                    </Link>
-                    <button onClick={handleLogout} className={styles.menuItem}>
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/user/login" className={styles.menuItem}>
-                      Sign In
-                    </Link>
-                    <Link to="/register" className={styles.menuItem}>
-                      Sign Up
-                    </Link>
-                  </>
-                )}
+                <Link to="/user" className={styles.userButton}>
+                  {auth.user.name}
+                </Link>
+              </div>
+            ) : (
+              <div className={styles.authButtons}>
+                <Link to="/user/login" className={styles.loginButton} onClick={closeMenu}>
+                  Giriş Yap
+                </Link>
+                <Link to="/register" className={styles.registerButton} onClick={closeMenu}>
+                  Ücretsiz Başla
+                </Link>
               </div>
             )}
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
     </nav>
   );

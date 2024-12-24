@@ -3,37 +3,38 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace quantiq.Server.Models.Entities
 {
-    [Table("Users")]
-    public class User
+    [Table("TrendyolConf")]
+    public class TrendyolConf
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [ForeignKey("User")]
         [Required]
-        [StringLength(100)]
-        public string Name { get; set; }
+        public int UserId { get; set; }
 
         [Required]
-        [StringLength(100)]
-        public string Surname { get; set; }
+        public User User { get; set; }
 
+        [MaxLength(100)]
+        public string Description { get; set; }
+
+        [MaxLength(256)]
         [Required]
-        [EmailAddress]
-        [StringLength(255)]
-        public string Email { get; set; }
+        public string Apikey { get; set; }
 
+        [MaxLength(256)]
         [Required]
-        [StringLength(255)]
-        public string PhoneNumber { get; set; }
+        public string SuppleirId { get; set; }
+
+        [MaxLength(256)]
         [Required]
-        public string PasswordHash { get; set; }
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        public DateTime? LastLoginAt { get; set; }
+        public string SecretApikey { get; set; }
 
         public int? CreatedBy { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public int? UpdatedBy { get; set; }
 
@@ -43,4 +44,4 @@ namespace quantiq.Server.Models.Entities
 
         public DateTime? DeletedAt { get; set; }
     }
-    }
+}

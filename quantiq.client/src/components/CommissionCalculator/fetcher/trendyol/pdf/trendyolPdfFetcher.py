@@ -38,7 +38,7 @@ with pdfplumber.open(pdf_path) as pdf:
         table = page.extract_table()
         if table:
             headers = table[0]  # İlk satır başlıklar
-            for row in table[1:]:
+            for row in table[2:]:
                 try:
                     entry = {
                         "platform": "trendyol",  # Sabit platform adı
@@ -55,7 +55,6 @@ with pdfplumber.open(pdf_path) as pdf:
                         "level5_brand_commission": clean_percentage(row[12]),  # Seviye 5 Marka Komisyon
                         "level4_brand_commission": clean_percentage(row[13]),  # Seviye 4 Marka Komisyon
                     }
-                    # Listeye ekle
                     commission_data["commissionRates"].append(entry)
                 except IndexError:
                     # Eksik veya hatalı satırları atla

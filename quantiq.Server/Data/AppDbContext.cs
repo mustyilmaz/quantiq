@@ -8,6 +8,7 @@ namespace quantiq.Server.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
 
         public DbSet<User> Users { get; set; }
+        public DbSet<TrendyolConf> TrendyolConf { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

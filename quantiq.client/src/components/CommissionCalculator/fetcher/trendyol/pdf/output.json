@@ -2,21 +2,6 @@
   "commissionRates": [
     {
       "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
       "category": "Aksesuar > Altın (İşlenmemiş)",
       "productgroup": "",
       "vade": 7,
@@ -192,21 +177,6 @@
       "women_entrepreneur_commission": 4.27,
       "brand": "adidas, Asics, Casio, Colin's, Columbia, converse, Decathlon, Diesel,\nDockers, Helly Hansen, HUMMEL, Jack & Jones, Jack Wolfskin, Lee, Lee\nCooper, Levi's, Loft, Lotto, Ltb, Mavi, Merrell, MOON BOOT, NATIONAL\nGEOGRAPHIC, New Balance, Nike, Only & Sons, Puma, Quiksilver,\nReebok, Salomon, Seiko, SKECHERS, THE NORTH FACE, Timberland,\nUnder Armour, Vans, Wrangler, Riders by Lee,ALL TERRAIN GEAR -x-\nWrangler",
       "brand_category_commission": 15.25,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
       "level5_brand_commission": null,
       "level4_brand_commission": null
     },
@@ -432,21 +402,6 @@
       "women_entrepreneur_commission": 4.47,
       "brand": "adidas, Asics, Casio, Colin's, Columbia, converse, Decathlon, Diesel,\nDockers, Helly Hansen, HUMMEL, Jack & Jones, Jack Wolfskin, Lee, Lee\nCooper, Levi's, Loft, Lotto, Ltb, Mavi, Merrell, MOON BOOT, NATIONAL\nGEOGRAPHIC, New Balance, Nike, Only & Sons, Puma, Quiksilver,\nReebok, Salomon, Seiko, SKECHERS, THE NORTH FACE, Timberland,\nUnder Armour, Vans, Wrangler,Riders by Lee,ALL TERRAIN GEAR -x-\nWrangler",
       "brand_category_commission": 15.25,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
       "level5_brand_commission": null,
       "level4_brand_commission": null
     },
@@ -642,21 +597,6 @@
       "women_entrepreneur_commission": 4.27,
       "brand": "Anadolu Efes, Antalyaspor Store, Bandırmaspor, Beşiktaş, Bursastore,\nEczacıbaşı, Fenerbahçe, Fenerium, Galatasaray, Göz-Göz Store,\nGöztepe, GS, GSStore, Hatayspor Store, İstanbul BFK Store, Kartal\nYuvası, Konya Store, KSK Store, Nike - Galatasaray, Store 55,\nTrabzonspor, TSCLUB, Türk Telekom, Yeni Malatyaspor, Gaziantep FK,\nGaziantepspor, GfkStore, Antalyaspor Store ,Antalyaspor,Alanyaspor,\nFatih Karagümrük SK, Karagümrükspor, Kasımpaşaspor, Kasımpaşa SK,\nİstanbul BFK Store, Pendikspor, Pendik Store, Sivasspor, Yukatel Adana\nDemirspor A.Ş, Adana Demirspor, Adanademirspor",
       "brand_category_commission": 14.24,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
       "level5_brand_commission": null,
       "level4_brand_commission": null
     },
@@ -1067,21 +1007,6 @@
     },
     {
       "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
       "category": "Banyo Yapı &\nHırdavat > Elektrik & Tesisat Malzemeleri",
       "productgroup": "Elektrik ve Aydınlatma",
       "vade": 28,
@@ -1422,21 +1347,6 @@
       "women_entrepreneur_commission": 3.3,
       "brand": "Elele, Baby Home, 4 Baby, Prego, Kanz, Kraft",
       "brand_category_commission": 10.0,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
       "level5_brand_commission": null,
       "level4_brand_commission": null
     },
@@ -1907,21 +1817,6 @@
     },
     {
       "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
       "category": "Elektronik > Beyaz Eşya & TV",
       "productgroup": "Ankastre, Fırın, Ocak,\nDavlumbaz, Aspiratör,\nMikrodalga Fırın, Mini &\nMidi Fırın, Su Sebili",
       "vade": 21,
@@ -2222,21 +2117,6 @@
     },
     {
       "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
       "category": "Elektronik > Elektrikli Ev Aletleri",
       "productgroup": "Dik Süpürge, Torbasız\nSüpürge, Robot Süpürge",
       "vade": 21,
@@ -2462,21 +2342,6 @@
     },
     {
       "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
       "category": "Elektronik > Elektronik Aksesuarlar",
       "productgroup": "Araç İçi Telefon Tutucu,\nPowerbank",
       "vade": 21,
@@ -2639,21 +2504,6 @@
       "brand_category_commission": 10.0,
       "level5_brand_commission": 7.2,
       "level4_brand_commission": 7.2
-    },
-    {
-      "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
     },
     {
       "platform": "trendyol",
@@ -2837,21 +2687,6 @@
     },
     {
       "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
       "category": "Elektronik > Elektronik Aksesuarlar",
       "productgroup": "Wireless Adaptör,\nRouterlar,Menzil\nGenişletici,Network\nAksesuarları,Access Point,\nVDSL Modemler,ADSL\nModemler,Elektronik\nDevre Elemanları,Ağ\nModem Switchleri,4G\nTaşınabilir Modem,\nPowerline Ürünleri,4G\nModem & Router",
       "vade": 21,
@@ -3026,21 +2861,6 @@
       "special_group_commission": 10.67,
       "women_entrepreneur_commission": 2.8,
       "brand": "",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
       "brand_category_commission": null,
       "level5_brand_commission": null,
       "level4_brand_commission": null
@@ -3284,21 +3104,6 @@
       "brand_category_commission": 9.5,
       "level5_brand_commission": 6.5,
       "level4_brand_commission": 7.0
-    },
-    {
-      "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
     },
     {
       "platform": "trendyol",
@@ -3617,21 +3422,6 @@
     },
     {
       "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
       "category": "Ev > Ev Dekorasyon",
       "productgroup": "Sanat Eseri",
       "vade": 28,
@@ -3926,21 +3716,6 @@
       "special_group_commission": 16.27,
       "women_entrepreneur_commission": 4.07,
       "brand": "",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
       "brand_category_commission": null,
       "level5_brand_commission": null,
       "level4_brand_commission": null
@@ -4337,21 +4112,6 @@
     },
     {
       "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
       "category": "Kozmetik & Kişisel\nBakım > Kişisel Bakım",
       "productgroup": "Ağda ve Epilasyon",
       "vade": 28,
@@ -4607,21 +4367,6 @@
     },
     {
       "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
       "category": "Mobilya > Ofis Mobilyaları",
       "productgroup": "Kitaplık,Duvar Rafı,Laptop\nSehpası,Çalışma Masası,\nÇalışma Sandalyesi, Ofis\nKoltukları ve Kanepeleri,\nOfis Masaları,Ofis\nDolapları,Keson,Ofis\nSehpası",
       "vade": 28,
@@ -4871,21 +4616,6 @@
       "special_group_commission": 14.75,
       "women_entrepreneur_commission": 3.3,
       "brand": "",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
       "brand_category_commission": null,
       "level5_brand_commission": null,
       "level4_brand_commission": null
@@ -5351,21 +5081,6 @@
       "special_group_commission": 13.56,
       "women_entrepreneur_commission": 3.46,
       "brand": "",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
       "brand_category_commission": null,
       "level5_brand_commission": null,
       "level4_brand_commission": null
@@ -6077,21 +5792,6 @@
     },
     {
       "platform": "trendyol",
-      "category": "Kategori > Alt Kategori",
-      "productgroup": "Ürün Grubu",
-      "vade": null,
-      "commission": null,
-      "level5_commission": null,
-      "level4_commission": null,
-      "special_group_commission": null,
-      "women_entrepreneur_commission": null,
-      "brand": "Marka\n(İlgili kategori ve alt kategorilerde satışı olan seçili markaların\nkomisyonlarını gösterir)",
-      "brand_category_commission": null,
-      "level5_brand_commission": null,
-      "level4_brand_commission": null
-    },
-    {
-      "platform": "trendyol",
       "category": "Süpermarket > Gıda & İçecek",
       "productgroup": "Tahin",
       "vade": 28,
@@ -6376,4 +6076,4 @@
       "level4_brand_commission": null
     }
   ]
-} 
+}

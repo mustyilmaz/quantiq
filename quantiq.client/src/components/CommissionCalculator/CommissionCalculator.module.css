@@ -1,132 +1,187 @@
-/* styles.css */
 body {
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-  }
-  
-  h1 {
-    margin-bottom: 20px;
-    font-weight: 600;
-  }
-  
-  .platformSwitch {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .platformLogo {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border: 2px solid transparent;
-    transition: all 0.3s ease;
-    background-color: #5a88ad;
-    border-radius: 4px;
-  }
-  
-  .platformLogo:hover {
-    border-color: #ccc;
-  }
-  
-  .platformLogo.selected {
-    border-color: #007bff;
-    background-color: #7fbdf0;
-    transform: scale(1.1);
-  }
-  
-  .platformLogo img {
-    height: 20px;
-    width: auto;
-    margin-right: 8px;
-  }
-  
-  .commissionForm {
-    width: 100%;
-    max-width: 600px; /* Set a max width for the form */
-  }
-  
-  .formGroup {
-    margin-bottom: 10px;
-    width: 100%;
-  }
-  
-  input,
-  select {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  button {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 20px;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  .result {
-    margin-top: 20px;
-    font-size: 18px;
-    font-weight: 500;
-  }
-  
-  .formRow {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    width: 100%;
-  }
-  
-  .smallInput {
-    max-width: 150px; /* Smaller width for KDV, Carry Price, and Commission Rate */
-  }
-  
-  .carryType {
-    display: flex;
-    gap: 20px;
-    margin-top: 10px;
-  }
-  
-  .carryOption {
-    padding: 10px 20px;
-    background-color: #f4f4f4;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
-    width: 100px; /* Set a width for the options */
-  }
-  
-  .carryOption:hover {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .carryOption.selected {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .carryOption:not(.selected):hover {
-    background-color: #0056b3;
-  }
+  font-family: 'Poppins', sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+}
+
+h1 {
+  margin-bottom: 30px;
+  font-weight: 600;
+  color: #333;
+}
+
+.platformSwitch {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.platformLogo {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 20px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color:#333
+}
+
+.platformLogo:hover {
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.platformLogo.selected {
+  border-color: #007bff;
+  background-color: #eef6ff;
+  transform: scale(1.05);
+}
+
+.platformLogo img {
+  height: 24px;
+  width: auto;
+  margin-right: 10px;
+}
+
+.commissionForm {
+  width: 100%;
+  max-width: 700px;
+  background-color: #ffffff;
+  padding: 20px 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column; /* Label ve inputları dikey hizalar */
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.formGroup label {
+  margin-bottom: 5px; /* Input ve label arasındaki boşluk */
+  font-size: 12px; /* Küçük boyut */
+  color: #555; /* Daha açık bir renk */
+  text-align: left; /* Sola hizalı */
+}
+
+input,
+select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 0; /* Margin sıfırlandı */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 
 
-  
+button {
+  padding: 12px 20px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.result {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #007bff;
+}
+
+.carryType {
+  display: flex;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.carryOption {
+  padding: 6px 12px; /* Daha ufak buton boyutu */
+  background-color: #f4f4f4;
+  border-radius: 12px; /* Dairesel kenarlar için */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  display: flex;
+  align-items: center;
+}
+
+.carryOption:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.carryOption.selected {
+  background-color: #007bff;
+  color: white;
+}
+
+.carryOption input {
+  margin-right: 8px;
+  width: 14px;
+  height: 14px;
+}
+
+
+
+.smallInput label {
+  margin-bottom: 5px; /* Input ve label arasındaki boşluk */
+  font-size: 12px; /* Küçük boyut */
+  color: #555; /* Daha açık bir renk */
+  text-align: left; /* Sola hizalı */
+}
+
+.formRow {
+  display: flex; /* Yan yana hizalar */
+  gap: 20px; /* Alanlar arasında boşluk bırakır */
+  flex-wrap: wrap; /* Geniş ekranlarda yan yana, dar ekranlarda alt alta */
+  margin-bottom: 20px;
+}
+
+.smallInput {
+  flex: 1; /* Eşit genişlik sağlar */
+  display: flex;
+  flex-direction: column;
+  min-width: 150px; /* Minimum genişlik */
+}
+
+input,
+select {
+  width: 100%; /* Genişliği konteynıra göre ayarlar */
+  padding: 8px;
+  margin-top: 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* İç dolgu hesaba katılır */
+}
+
+input[disabled] {
+  background-color: #f9f9f9; /* Hafif bir arka plan rengi */
+  color: #333; /* Daha okunabilir bir yazı rengi */
+  cursor: not-allowed; /* Kullanıcıya tıklanamayacağını belirtmek için */
+  border: 1px solid #ccc; /* Daha belirgin bir çerçeve */
+}
