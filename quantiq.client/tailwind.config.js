@@ -1,6 +1,9 @@
+// tailwind.config.js
+import daisyui from 'daisyui'; // require yerine import kullanın
+
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: 'class', 
+  darkMode: 'class',
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
@@ -25,9 +28,9 @@ export default {
     },
   },
   plugins: [
-    require("daisyui")
+    daisyui, // require yerine import kullanın
   ],
   daisyui: {
-    themes: ["light", "dark"], 
+    themes: ["light", "dark"],
   },
 }

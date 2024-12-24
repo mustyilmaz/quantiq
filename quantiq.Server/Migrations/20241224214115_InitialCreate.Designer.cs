@@ -12,8 +12,8 @@ using quantiq.Server.Data;
 namespace quantiq.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241224210025_Migration_")]
-    partial class Migration_
+    [Migration("20241224214115_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
