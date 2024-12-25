@@ -260,3 +260,133 @@
     font-size: 1.75rem;
   }
 }
+
+/* Sözleşme modalları için stiller */
+.agreementModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg-secondary);
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.agreementContent {
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.agreementContent h2 {
+  color: var(--accent-color);
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.agreementContent h3 {
+  color: var(--text-primary);
+  margin: 1.5rem 0 1rem;
+  font-size: 1.2rem;
+}
+
+.agreementContent p {
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+
+.agreementContent ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.agreementContent li {
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.checkboxContainer {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.checkboxLabel:hover {
+  color: var(--accent-color);
+}
+
+.agreementLink {
+  color: var(--accent-color);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.agreementLink:hover {
+  opacity: 0.8;
+}
+
+.modalCloseButton {
+  position: static;
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.75rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.modalCloseButton:hover {
+  background: var(--bg-primary);
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+/* Modal action butonları için container */
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.modalAcceptButton {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modalAcceptButton:hover {
+  background-color: var(--accent-color-dark);
+  transform: translateY(-1px);
+}
+
+.modalAcceptButton:active {
+  transform: translateY(0);
+}

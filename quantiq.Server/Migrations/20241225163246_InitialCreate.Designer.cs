@@ -12,7 +12,7 @@ using quantiq.Server.Data;
 namespace quantiq.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241224214115_InitialCreate")]
+    [Migration("20241225163246_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -76,9 +76,15 @@ namespace quantiq.Server.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Apikey")
+                        .IsUnique();
+
+                    b.HasIndex("SuppleirId")
+                        .IsUnique();
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("TrendyolConf");
+                    b.ToTable("TrendyolConf", (string)null);
                 });
 
             modelBuilder.Entity("quantiq.Server.Models.Entities.User", b =>
@@ -88,6 +94,18 @@ namespace quantiq.Server.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("AcceptanceDatePrivacyPolicy")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("AcceptanceDateUserAgreement")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ConsentDateKVKK")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -106,7 +124,42 @@ namespace quantiq.Server.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
+                    b.Property<bool>("HasAcceptedPrivacyPolicy")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("HasAcceptedUserAgreement")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("HasConsentedKVKK")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsEmailVerified")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsPhoneNumberVerified")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime?>("LastLoginAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LastPasswordChange")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
@@ -114,19 +167,46 @@ namespace quantiq.Server.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<int>("Package")
+                        .HasColumnType("integer");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("PasswordResetToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("PasswordResetTokenExpiry")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("ProfilePictureUrl")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SettingsJson")
+                        .HasColumnType("text");
 
                     b.Property<string>("Surname")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("TwoFactorSecret")
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -139,7 +219,38 @@ namespace quantiq.Server.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique();
+
+                    b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("quantiq.Server.Models.Entities.UserPasswordHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ChangedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "PasswordHash")
+                        .IsUnique();
+
+                    b.ToTable("UserPasswordHistories", (string)null);
                 });
 
             modelBuilder.Entity("quantiq.Server.Models.Entities.TrendyolConf", b =>
@@ -147,10 +258,26 @@ namespace quantiq.Server.Migrations
                     b.HasOne("quantiq.Server.Models.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("quantiq.Server.Models.Entities.UserPasswordHistory", b =>
+                {
+                    b.HasOne("quantiq.Server.Models.Entities.User", "User")
+                        .WithMany("PasswordHistories")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("quantiq.Server.Models.Entities.User", b =>
+                {
+                    b.Navigation("PasswordHistories");
                 });
 #pragma warning restore 612, 618
         }

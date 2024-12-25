@@ -112,6 +112,30 @@ const Footer = () => {
         </div>
 
         <div className={styles.footerSection}>
+          <h3>Yasal</h3>
+          <ul>
+            <li>
+              <Link to="/kvkk">
+                <Shield size={16} className={styles.menuIcon} />
+                KVKK Aydınlatma Metni
+              </Link>
+            </li>
+            <li>
+              <Link to="/privacy">
+                <Shield size={16} className={styles.menuIcon} />
+                Gizlilik Politikası
+              </Link>
+            </li>
+            <li>
+              <Link to="/terms">
+                <FileText size={16} className={styles.menuIcon} />
+                Kullanıcı Sözleşmesi
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div className={styles.footerSection}>
           <h3>İletişim</h3>
           <ul className={styles.contactList}>
             <li>

@@ -1,10 +1,18 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from './UserNavbar.module.css';
 
 const UserNavbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const handleLogout = () => {
+    // Local storage'dan token'ı temizle
+    localStorage.removeItem('token');
+    // Kullanıcıyı login sayfasına yönlendir
+    navigate('/user/login');
+  };
 
   return (
     <nav 
@@ -39,6 +47,15 @@ const UserNavbar = () => {
             <span className={styles.icon}>📄</span>
             <span className={styles.linkText}>API Information</span>
           </Link>
+        </li>
+        <li className={styles.navItem}>
+          <button 
+            onClick={handleLogout}
+            className={`${styles.navLink} ${styles.logoutButton}`}
+          >
+            <span className={styles.icon}>🚪</span>
+            <span className={styles.linkText}>Logout</span>
+          </button>
         </li>
       </ul>
     </nav>

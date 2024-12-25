@@ -127,7 +127,14 @@ namespace quantiq.Server.Controllers
                 Email = registerDto.Email,
                 PhoneNumber = registerDto.PhoneNumber,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                // KVKK ve sözleşme alanları
+                HasConsentedKVKK = registerDto.HasConsentedKVKK,
+                ConsentDateKVKK = DateTime.UtcNow,
+                HasAcceptedPrivacyPolicy = registerDto.HasAcceptedPrivacyPolicy,
+                AcceptanceDatePrivacyPolicy = DateTime.UtcNow,
+                HasAcceptedUserAgreement = registerDto.HasAcceptedUserAgreement,
+                AcceptanceDateUserAgreement = DateTime.UtcNow
             };
 
             _context.Users.Add(user);

@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,27 +11,26 @@ namespace quantiq.Server.Models.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [ForeignKey("User")]
         [Required]
         public int UserId { get; set; }
 
-        [Required]
-        public User User { get; set; }
+        [ForeignKey("UserId")]
+        public User User { get; set; } = new User();
 
         [MaxLength(100)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [MaxLength(256)]
         [Required]
-        public string Apikey { get; set; }
+        public string Apikey { get; set; } = string.Empty;
 
         [MaxLength(256)]
         [Required]
-        public string SuppleirId { get; set; }
+        public string SuppleirId { get; set; } = string.Empty;
 
         [MaxLength(256)]
         [Required]
-        public string SecretApikey { get; set; }
+        public string SecretApikey { get; set; } = string.Empty;
 
         public int? CreatedBy { get; set; }
 
