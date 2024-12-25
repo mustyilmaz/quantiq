@@ -57,15 +57,19 @@ export default defineConfig({
                 target,
                 secure: false
             },
-            '^/api/Auth/user-login': {
+            '^/api/Auth/login': {
                 target,
                 secure: false
             },
-            '^/api/Auth/verify-token': {
+            '^/api/User/details': {
                 target,
                 secure: false
             },
             '^/api/Auth/change-password': {
+                target,
+                secure: false
+            },
+            '^/api/Auth/verify-token': {
                 target,
                 secure: false
             },

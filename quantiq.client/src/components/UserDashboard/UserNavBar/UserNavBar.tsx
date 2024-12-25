@@ -9,7 +9,7 @@ const UserNavbar = () => {
 
   const handleLogout = () => {
     // Local storage'dan token'ı temizle
-    localStorage.removeItem('token');
+    localStorage.removeItem('auth_token');
     // Kullanıcıyı login sayfasına yönlendir
     navigate('/user/login');
   };

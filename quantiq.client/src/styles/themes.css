@@ -13,6 +13,9 @@
   --success-border: #48bb78;
   --error-bg: #fff5f5;
   --error-border: #f56565;
+  --bg-warning: #fff3cd;
+  --border-warning: #ffeeba;
+  --text-warning: #856404;
 }
 
 :root[data-theme="dark"] {
@@ -30,4 +33,10 @@
   --success-border: #38a169;
   --error-bg: rgba(229, 62, 62, 0.2);
   --error-border: #e53e3e;
+  --package-bg: #f0f0f0;
+  --package-border: #e0e0e0;
+  --package-text: #333333;  
+  --bg-warning: #2c2a1c;
+  --border-warning: #443d24;
+  --text-warning: #e9d16c;
 }

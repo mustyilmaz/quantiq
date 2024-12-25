@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState } from 'react';
 
-import Navbar from "./components/NavBar/Navbar";
+import Navbar from "./components/NavBar/NavBar";
 import Notification from "./components/Notification/Notification";
 import Footer from "./components/Footer/Footer";
 import NotFound from "./components/NotFound/NotFound";

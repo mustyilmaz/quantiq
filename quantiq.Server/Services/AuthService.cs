@@ -15,19 +15,16 @@ namespace quantiq.Server.Services
             _configuration = configuration;
         }
 
-        public string GenerateJwtToken(User user)
+        public string GenerateJwtToken(int userId)
         {
-            // Kullanıcı bilgilerini claim olarak ayarlıyoruz.
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("userId", user.Id.ToString())  // Kullanıcı ID'sini claim olarak ekliyoruz
+                new Claim("userId", userId.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
             var expiration = DateTime.UtcNow.AddHours(1);
 
             var token = new JwtSecurityToken(
@@ -41,12 +38,40 @@ namespace quantiq.Server.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public int? ValidateJwtToken(string token)
+        public bool ValidateToken(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+                return false;
+
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]);
+                
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+    
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public int? GetUserIdFromToken(string token)
         {
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]);
+                
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,

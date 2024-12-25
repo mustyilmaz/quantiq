@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { authService } from '../services/authService';
+import { authService } from '../services/AuthServiceforClient';
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -12,9 +12,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     useEffect(() => {
         const verifyAuth = async () => {
             try {
-                await authService.verifyToken();
-                setIsAuthenticated(true);
+                const verifyResponse = await authService.verifyToken();
+                if(verifyResponse){
+                    setIsAuthenticated(true);
+                }
+                else{
+                    setIsAuthenticated(false);
+                }
             } catch (error) {
+                console.log("protected route error: ", error);
                 setIsAuthenticated(false);
             }
         };

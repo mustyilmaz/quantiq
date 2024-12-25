@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { authService } from '../../services/authService';
+import { authService } from '../../services/AuthServiceforClient';
 import { useTheme } from '../../context/ThemeContext';
 import { Menu, X, Sun, Moon, ChevronDown } from 'lucide-react';
 import styles from './Navbar.module.css';

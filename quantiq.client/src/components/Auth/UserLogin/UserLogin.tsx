@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./UserLogin.module.css";
-import { authService } from "../../../services/authService";
+import { authService } from "../../../services/AuthServiceforClient";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../../hooks/useAuth';
 import Turnstile from "react-turnstile";
@@ -57,7 +57,7 @@ const UserLogin: React.FC = () => {
       );
       
       if (response.success) {
-        const verifyResponse = await authService.verifyToken();
+        const verifyResponse = await authService.getUserDetails();
         if (verifyResponse.success && verifyResponse.user) {
           updateAuthStatus(true, verifyResponse.user);
           navigate("/user/");
