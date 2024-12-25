@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import styles from "./UserLogin.module.css";
-import { authService } from "../../../services/AuthServiceforClient";
+import { authService } from "../../../services/auth.service";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../../hooks/useAuth';
 import Turnstile from "react-turnstile";
 
-interface LoginData {
+interface LoginCredentials {
   emailOrPhone: string;
   password: string;
   turnstileToken: string;
@@ -15,24 +15,27 @@ interface LoginError {
   message: string;
 }
 
+
 const UserLogin: React.FC = () => {
   useEffect(() => {
     document.title = "Quantiq - E-Commerce Çözümleri - Giriş Yap";
   }, []);
 
+  
+
   const navigate = useNavigate();
   const { updateAuthStatus } = useAuth();
-  const [loginData, setLoginData] = useState<LoginData>({
-    emailOrPhone: "",
-    password: "",
-    turnstileToken: "",
+  const [credentials, setCredentials] = useState<LoginCredentials>({
+    emailOrPhone: '',
+    password: '',
+    turnstileToken: ''
   });
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setLoginData((prev) => ({ ...prev, [id]: value }));
+    setCredentials((prev) => ({ ...prev, [id]: value }));
     if (id === 'emailOrPhone') {
       const inputType = value.includes('@') ? 'email' : 'text';
       e.target.type = inputType;
@@ -41,37 +44,27 @@ const UserLogin: React.FC = () => {
   };
 
   const handleTurnstileCallback = (token: string) => {
-    setLoginData({ ...loginData, turnstileToken: token });
+    setCredentials({ ...credentials, turnstileToken: token });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setLoading(true);
     setError(null);
 
     try {
-      const response = await authService.login(
-        loginData.emailOrPhone,
-        loginData.password,
-        loginData.turnstileToken
-      );
+      const response = await authService.login(credentials);
       
-      if (response.success) {
-        const verifyResponse = await authService.getUserDetails();
-        if (verifyResponse.success && verifyResponse.user) {
-          updateAuthStatus(true, verifyResponse.user);
-          navigate("/user/");
-        } else {
-          setError("Kullanıcı bilgileri alınamadı");
-        }
+      if (response.success && response.token) {
+        navigate('/user/dashboard');
+        window.location.reload();
       } else {
-        setError(response.error || "Giriş başarısız oldu");
+        setError(response.error || 'Giriş başarısız');
       }
-    } catch (error) {
-      const loginError = error as LoginError;
-      setError(loginError.message || "Giriş başarısız oldu");
+    } catch (err) {
+      setError('Bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -89,7 +82,7 @@ const UserLogin: React.FC = () => {
       <div className={styles.loginContainer}>
         <div className={styles.loginWrapper}>
           <h1 className={styles.loginTitle}>Welcome Back</h1>
-          <form onSubmit={handleSubmit} className={styles.loginForm}>
+          <form onSubmit={handleLogin} className={styles.loginForm}>
             <div className={styles.formGroup}>
               <label htmlFor="emailOrPhone" className={styles.formLabel}>
                 Email or Phone Number
@@ -99,7 +92,7 @@ const UserLogin: React.FC = () => {
                 id="emailOrPhone"
                 className={styles.formInput}
                 placeholder="Enter your email or phone number"
-                value={loginData.emailOrPhone}
+                value={credentials.emailOrPhone}
                 onChange={handleInputChange}
                 required
               />
@@ -113,7 +106,7 @@ const UserLogin: React.FC = () => {
                 id="password"
                 className={styles.formInput}
                 placeholder="Enter your password"
-                value={loginData.password}
+                value={credentials.password}
                 onChange={handleInputChange}
                 required
               />
@@ -127,9 +120,9 @@ const UserLogin: React.FC = () => {
             <button
               type="submit"
               className={styles.submitButton}
-              disabled={isLoading}
+              disabled={loading}
             >
-              {isLoading ? "Logging In..." : "Login"}
+              {loading ? "Logging In..." : "Login"}
             </button>
             <div className={styles.divider}>
               <span>or</span>

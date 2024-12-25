@@ -30,12 +30,12 @@ const Navbar = () => {
     const checkToken = async () => {
       const token = localStorage.getItem('token');
       if (token && !auth.isAuthenticated) {
-        // Token var ama auth durumu false ise yeniden kontrol et
         const response = await authService.verifyToken();
-        if (response.success && response.user) {
-          auth.updateAuthStatus(true, response.user);
+        if (response) {
+          const userDetails = await authService.getUserDetails();
+          auth.updateAuthStatus(true, userDetails.user.name);
         } else {
-          localStorage.removeItem('token');
+          localStorage.removeItem('auth_token');
         }
       }
     };
@@ -130,7 +130,7 @@ const Navbar = () => {
 
             {auth.isAuthenticated && auth.user ? (
               <div className={styles.userMenu}>
-                <Link to="/user" className={styles.userButton}>
+                <Link to="/user/dashboard" className={styles.userButton}>
                   {auth.user.name}
                 </Link>
               </div>

@@ -61,7 +61,7 @@ const App = () => {
                 </ProtectedRoute>
               }
             >
-              <Route index element={<UserHome />} />
+              <Route path="dashboard" element={<UserHome />} />
               <Route path="api-information" element={<InfoAPI />} />
               <Route path="change-password" element={<ChangePassword setNotification={setNotification}/>} />
             </Route>

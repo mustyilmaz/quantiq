@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { authService } from '../../../services/auth.service';
 import styles from './UserNavbar.module.css';
 
 const UserNavbar = () => {
@@ -8,10 +9,9 @@ const UserNavbar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleLogout = () => {
-    // Local storage'dan token'ı temizle
-    localStorage.removeItem('auth_token');
-    // Kullanıcıyı login sayfasına yönlendir
+    authService.logout();
     navigate('/user/login');
+    window.location.reload();
   };
 
   return (

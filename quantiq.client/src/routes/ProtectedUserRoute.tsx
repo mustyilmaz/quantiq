@@ -1,45 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { authService } from '../services/AuthServiceforClient';
+import { authService } from '../services/auth.service';
 
-interface ProtectedRouteProps {
-    children: React.ReactNode;
-}
+const ProtectedUserRoute = ({ children }: { children: React.ReactNode }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  useEffect(() => {
+    const verifyAuth = async () => {
+      const isValid = await authService.verifyToken();
+      setIsAuthenticated(isValid);
+    };
 
-    useEffect(() => {
-        const verifyAuth = async () => {
-            try {
-                const verifyResponse = await authService.verifyToken();
-                if(verifyResponse){
-                    setIsAuthenticated(true);
-                }
-                else{
-                    setIsAuthenticated(false);
-                }
-            } catch (error) {
-                console.log("protected route error: ", error);
-                setIsAuthenticated(false);
-            }
-        };
+    verifyAuth();
+  }, []);
 
-        verifyAuth();
-    }, []);
+  if (isAuthenticated === null) {
+    return <div>Loading...</div>;
+  }
 
-    if (isAuthenticated === null) {
-        // Yükleniyor durumu için bir loading component gösterilebilir
-        return <div>Loading...</div>;
-    }
-
-    if (!isAuthenticated) {
-        // Kullanıcı giriş yapmamışsa login sayfasına yönlendir
-        return <Navigate to="/user/login" replace />;
-    }
-
-    // Kullanıcı doğrulanmışsa içeriği göster
-    return <>{children}</>;
+  return isAuthenticated ? <>{children}</> : <Navigate to="/user/login" />;
 };
 
-export default ProtectedRoute;
+export default ProtectedUserRoute;

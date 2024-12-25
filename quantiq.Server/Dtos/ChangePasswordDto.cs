@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 public class ChangePasswordDto
 {
     [Required(ErrorMessage = "Mevcut şifre gereklidir")]

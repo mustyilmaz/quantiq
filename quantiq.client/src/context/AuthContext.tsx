@@ -27,7 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('auth_token');
         
         if (!token) {
           setIsLoading(false);
@@ -36,17 +36,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         const response = await authService.verifyToken();
         
-        if (response.success && response.user) {
+        if (response) {
           setIsAuthenticated(true);
-          setUser(response.user);
+          const userDetails = await authService.getUserDetails();
+          setUser(userDetails.user);
         } else {
-          localStorage.removeItem('token');
+          localStorage.removeItem('auth_token');
           setIsAuthenticated(false);
           setUser(null);
         }
       } catch (error) {
         console.error('Yetkilendirme kontrolü başarısız:', error);
-        localStorage.removeItem('token');
+        localStorage.removeItem('auth_token');
         setIsAuthenticated(false);
         setUser(null);
       } finally {

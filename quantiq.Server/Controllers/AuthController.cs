@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Text.Json;
 using BCrypt.Net;
 using quantiq.Server.Data;
-using quantiq.Server.Dtos;
+using quantiq.Server.DTOs.Auth;
 using quantiq.Server.Models.Entities;
 using quantiq.Server.Services;
 

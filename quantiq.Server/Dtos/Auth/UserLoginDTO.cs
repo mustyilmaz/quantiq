@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-namespace quantiq.Server.Dtos
+namespace quantiq.Server.DTOs.Auth
 {
     public class UserLoginDto
     {

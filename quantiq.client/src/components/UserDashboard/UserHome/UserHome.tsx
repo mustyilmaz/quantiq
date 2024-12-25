@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./UserHome.module.css";
-import { authService } from "../../../services/AuthServiceforClient";
+import { authService } from "../../../services/auth.service";
 
 
 type PackageType = 0 | 1 | 2;
