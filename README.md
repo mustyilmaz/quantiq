@@ -1,127 +1,146 @@
-# Quantiq
+# QuantiQ E-Commerce Solutions
 
-![Quantiq Logo](src/assets/logo.svg)
+![QuantiQ Logo](src/assets/logo.svg)
 
-Quantiq, modern ve yenilikçi dijital çözümler sunarak işletmenizi geleceğe taşıyan kapsamlı bir e-ticaret platformudur. Kullanıcı dostu arayüzü, güçlü özellikleri ve güvenilir altyapısıyla işletmenizin dijital dönüşümünü hızlandırır.
+QuantiQ, e-ticaret entegrasyonları için geliştirilmiş modern bir çözüm platformudur. .NET Core backend ve React TypeScript frontend kullanılarak geliştirilmiştir.
 
-## Özellikler
-
-- **Responsive Tasarım**: Tüm cihazlarda mükemmel görünümler.
-- **Kullanıcı Paneli**: Kolay yönetim ve izleme araçları.
-- **E-Ticaret Entegrasyonu**: Güçlü satış ve envanter yönetimi.
-- **Güvenli Alan**: Veri koruma ve güvenlik önlemleri.
-- **Çoklu Tema Desteği**: Dark ve Light mod seçenekleri.
-- **Uzantılar ve Entegrasyonlar**: API dokümantasyonu ile kolay entegrasyon.
-
-## Teknolojiler
-
-### Frontend
-- **React**: Kullanıcı arayüzü oluşturma.
-- **TypeScript**: Güçlü tipi sağlamak için.
-- **CSS Modules**: Bileşen tabanlı stil yönetimi.
-- **Framer Motion**: Gelişmiş animasyonlar için.
-- **React Router**: Sayfa navigasyonu için.
+## 🛠 Teknoloji Yığını
 
 ### Backend
-- **ASP.NET Core**: Güçlü ve ölçeklenebilir sunucu tarafı.
-- **Entity Framework Core**: Veritabanı yönetimi.
-- **PostgreSQL**: Güçlü ve esnek veritabanı çözümü.
-- **Swagger**: API dokümantasyonu ve test araçları.
-- **Authentication & Authorization**: Güvenli kullanıcı yönetimi.
+- **.NET 9.0**
+- **Entity Framework Core**
+- **PostgreSQL 17**
+- **JWT Authentication**
+- **BCrypt.Net**
+- **Cloudflare Turnstile Integration**
 
-## Kurulum
+### Frontend
+- **React 18**
+- **TypeScript**
+- **Vite**
+- **React Router v6**
+- **CSS Modules**
+- **Dark/Light Theme Support**
 
-Quantiq projesini yerel makinenizde çalıştırmak için aşağıdaki adımları izleyebilirsiniz.
+## 📋 Ön Gereksinimler
+- .NET 9.0 SDK
+- Node.js (v16+)
+- PostgreSQL 17
+- Visual Studio 2022 / VS Code
+- Git
 
-### Gereksinimler
+## 🚀 Kurulum Adımları
 
-- **Node.js**: [İndir](https://nodejs.org/)
-- **.NET 6 SDK**: [İndir](https://dotnet.microsoft.com/download/dotnet/6.0)
-- **PostgreSQL**: [İndir](https://www.postgresql.org/download/)
-- **Git**: [İndir](https://git-scm.com/)
+### 1. Repo Klonlama
+```bash
+git clone https://github.com/mustyilmaz/quantiq.git
+cd quantiq
+```
 
-### Projeyi Klonlama
+### 2. Backend Kurulumu
+```bash
+cd quantiq.Server
+```
 
-git clone https://github.com/kullaniciAdi/quantiq.git
+appsettings.json içinde aşağıdaki değerleri güncelleyin:
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Database=quantiq;Username=postgres;Password=Pwd123;Port=5432;"
+  },
+  "Jwt": {
+    "SecretKey": "your-secret-key-min-16-chars",
+    "Issuer": "your-issuer",
+    "Audience": "your-audience"
+  },
+  "Turnstile": {
+    "SecretKey": "your-turnstile-secret-key"
+  }
+}
+```
 
+```bash
+# Paketleri yükleyin
+dotnet restore
 
-### Backend Kurulumu
+# Database migration
+dotnet ef database update
 
-1. **Veritabanı Ayarlarını Yapılandırma**
+# Projeyi çalıştırın
+dotnet run
+```
 
-   `appsettings.json` dosyasını açın ve PostgreSQL bağlantı dizesini yapılandırın.
+### 3. Frontend Kurulumu
+```bash
+cd quantiq.client
 
-   ```json
-   {
-     "ConnectionStrings": {
-       "DefaultConnection": "Host=localhost;Database=quantiq_db;Username=postgres;Password=yourpassword"
-     }
-   }
-   ```
+# Bağımlılıkları yükleyin
+npm install
 
-2. **Veritabanını Migrasyonları Uygulama**
+# .env dosyasını oluşturun
+cp .env.example .env
+```
 
-   ```bash
-   cd Server
-   dotnet ef database update
-   ```
+.env içinde aşağıdaki değerleri güncelleyin:
+```env
+VITE_TURNSTILE_SITE_KEY=your-turnstile-site-key
+```
 
-3. **Backend Sunucusunu Başlatma**
+```bash
+# Geliştirme sunucusunu başlatın
+npm run dev
+```
 
-   ```bash
-   dotnet run
-   ```
+## 📁 Proje Yapısı
 
-### Frontend Kurulumu
+```
+quantiq/
+├── quantiq.Server/           # Backend projesi
+│   ├── Controllers/         # API Controllers
+│   ├── Services/           # Business logic
+│   ├── Models/            # Domain models
+│   │   ├── Entities/     # Database entities
+│   │   └── Enums/       # Enumerations
+│   ├── DTOs/            # Data transfer objects
+│   │   ├── Auth/       # Authentication DTOs
+│   │   └── User/      # User related DTOs
+│   └── Data/          # Database context
+│
+└── quantiq.client/          # Frontend projesi
+    ├── src/
+    │   ├── components/    # React components
+    │   ├── services/     # API services
+    │   ├── context/     # React context
+    │   ├── hooks/      # Custom hooks
+    │   ├── routes/    # Route components
+    │   └── types/    # TypeScript types
+```
 
-1. **Gerekli Paketleri Yükleme**
+## 🔒 Güvenlik Özellikleri
+- JWT Authentication
+- Password Hashing (BCrypt)
+- Cloudflare Turnstile Bot Protection
+- HTTPS Enforcement
+- CORS Policy
+- XSS Protection
 
-   ```bash
-   cd ../client
-   npm install
-   ```
+## 🎨 Tema Desteği
+Proje, CSS değişkenleri kullanarak dark/light tema desteği sunar. Tema değişimi otomatik olarak kullanıcı tercihlerine göre yapılır.
 
-2. **Frontend Uygulamasını Başlatma**
+## 🤝 Katkıda Bulunma
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-   ```bash
-   npm start
-   ```
+## 📫 İletişim
+- Email: your-email@example.com
+- Project Link: https://github.com/mustyilmaz/quantiq
 
-## Kullanım
-
-- **Ana Sayfa**: Uygulamanın ana arayüzünü görüntüler.
-- **Kayıt Ol/Giriş Yap**: Kullanıcı hesap oluşturma ve oturum açma.
-- **Komisyon Hesaplayıcı**: Satış komisyonlarını hesaplama.
-- **Hava Durumu Tahmini**: Basit bir hava durumu tahmin servisi.
-
-## Katkıda Bulunanlar
-
-Quantiq projesine katkıda bulunmak için lütfen aşağıdaki adımları izleyin:
-
-1. **Fork Yapın**
-2. **Branch Oluşturun** (`git checkout -b feature/ÖzellikAdi`)
-3. **Değişiklikleri Yapın**
-4. **Commit Atın** (`git commit -m 'Add some feature'`)
-5. **Push Yapın** (`git push origin feature/ÖzellikAdi`)
-6. **Pull Request Oluşturun**
-
-## Lisans
-
-Bu proje MIT Lisansı ile lisanslanmıştır. Daha fazla bilgi için [LICENSE](LICENSE) dosyasına bakınız.
-
-## İletişim
-
-- **E-posta**: [info@quantiq.com](mailto:info@quantiq.com)
-- **Telefon**: +90 (555) 123 4567
-- **Adres**: İstanbul, Türkiye
-- **GitHub**: [github.com/mustyilmaz/quantiq](https://github.com/mustyilmaz/quantiq)
-
-## Bağlantılar
-
-- [Proje GitHub Sayfası](https://github.com/mustyilmaz/quantiq)
-- [API Dokümantasyonu](http://localhost:5146/swagger/index.html)
-- [Demo](https://quantiq.com/demo)
+## 📄 Lisans
+Bu proje [MIT](LICENSE) lisansı altında lisanslanmıştır.
 
 ---
 
-Quantiq ile dijital dönüşümünüzü başlatın!
+QuantiQ ile dijital dönüşümünüzü başlatın!
