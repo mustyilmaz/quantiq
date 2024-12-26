@@ -46,7 +46,7 @@ const App = () => {
           <Routes>
             <Route path="*" element={<NotFound />} />
             <Route path="/" element={<Home />} />
-            <Route path="register" element={<Register />} />
+            <Route path="register" element={<Register setNotification={setNotification} />} />
             <Route path="user/login" element={<UserLogin />} />
             <Route
               path="/commission-calculator"

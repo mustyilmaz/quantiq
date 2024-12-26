@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-public class ChangePasswordDto
+public class ChangePasswordDTO
 {
     [Required(ErrorMessage = "Mevcut şifre gereklidir")]
     public string CurrentPassword { get; set; } = string.Empty;

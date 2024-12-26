@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import PasswordRequirements from "../../Auth/Validation/PasswordValitadion";
 import styles from "./ChangePassword.module.css";
 
@@ -13,7 +12,6 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ setNotification }) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
   const validatePassword = (password: string) => {
@@ -56,7 +54,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ setNotification }) => {
 
       if (response.ok) {
         setNotification({ message: responseData.message || "Şifre başarıyla değiştirildi!", type: 'success' });
-        navigate("/user/dashboard");
+        window.location.reload();
       } else {
         setNotification({ message: responseData.message || "Şifre değiştirme başarısız oldu. Lütfen tekrar deneyin.", type: 'error' });
       }

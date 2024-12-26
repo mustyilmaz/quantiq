@@ -13,7 +13,11 @@ import { Checkbox, FormControlLabel } from '@mui/material';
 
 import styles from "./Register.module.css";
 
-const Register = () => {
+interface RegisterProps {
+  setNotification: (notification: { message: string; type: 'success' | 'error' }) => void;
+}
+
+const Register: React.FC<RegisterProps> = ({ setNotification }) => {
   useEffect(() => {
     document.title = "Quantiq - E-Commerce Çözümleri - Kayıt Ol";
   }, []);
@@ -131,15 +135,24 @@ const Register = () => {
     const allValidationsPassed = Object.values(validations).every(Boolean);
 
     if (!registerData.turnstileToken) {
-        alert("Please complete Turnstile!");
+        setNotification({
+          message: "Lütfen Turnstile doğrulamasını tamamlayın!",
+          type: 'error'
+        });
         return;
     }
     if (!allValidationsPassed) {
-        alert("Please fix the password requirements!");
+        setNotification({
+          message: "Lütfen şifre gereksinimlerini düzeltin!",
+          type: 'error'
+        });
         return;
     }
     if (!kvkkChecked || !privacyChecked || !userAgreementChecked) {
-        alert("Lütfen tüm sözleşmeleri kabul ediniz!");
+        setNotification({
+          message: "Lütfen tüm sözleşmeleri kabul ediniz!",
+          type: 'error'
+        });
         return;
     }
 
@@ -156,20 +169,32 @@ const Register = () => {
         });
 
         if (response.ok) {
-            alert("Registration successful!");
+            setNotification({
+              message: "Kayıt başarılı! Giriş ekranına yönlendiriliyorsunuz.",
+              type: 'success'
+            });
             navigate("/user/login");
         } else {
-            alert("Registration failed! Please contact support.");
+            setNotification({
+              message: "Kayıt başarısız! Lütfen destek ile iletişime geçin.",
+              type: 'error'
+            });
         }
     } catch (error) {
         console.error("Registration error:", error);
-        alert("An error occurred during registration.");
+        setNotification({
+          message: "Kayıt sırasında bir hata oluştu.",
+          type: 'error'
+        });
     }
   };
 
   const preventCopyPaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
-    alert("Güvenlik nedeniyle kopyalama/yapıştırma işlemi engellenmiştir.");
+    setNotification({
+      message: "Güvenlik nedeniyle kopyalama/yapıştırma işlemi engellenmiştir.",
+      type: 'error'
+    });
   };
 
   return (
