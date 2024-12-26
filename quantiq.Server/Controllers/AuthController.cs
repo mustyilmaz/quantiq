@@ -140,8 +140,8 @@ namespace quantiq.Server.Controllers
                     var passwordHistory = new UserPasswordHistory
                     {
                         UserId = user.Id,
-                        PasswordHash = hashedPassword,
-                        ChangedAt = DateTime.UtcNow
+                        Password1 = hashedPassword,
+                        Password1ChangedAt = DateTime.UtcNow
                     };
                     Console.WriteLine("passwordHistory oluşturuldu ve passwordHistory.UserId: " + passwordHistory.UserId);
                     _context.UserPasswordHistories.Add(passwordHistory);
@@ -213,7 +213,6 @@ namespace quantiq.Server.Controllers
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO changePasswordDto)
         {
-            Console.WriteLine("api tarafında change-password çağrıldı");
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
@@ -228,8 +227,9 @@ namespace quantiq.Server.Controllers
                 {
                     return Unauthorized("Geçersiz token");
                 }
-                Console.WriteLine("api tarafında change-password çağrıldı ve userId: " + userId.Value);
+
                 var user = await _context.Users
+                    .Include(u => u.PasswordHistories)
                     .FirstOrDefaultAsync(u => u.Id == userId.Value);
 
                 if (user == null)
@@ -239,15 +239,12 @@ namespace quantiq.Server.Controllers
                     return BadRequest("Mevcut şifre yanlış");
 
                 // Son 3 şifreyi kontrol et
-                var recentPasswords = await _context.UserPasswordHistories
-                    .Where(ph => ph.UserId == userId.Value)
-                    .OrderByDescending(ph => ph.ChangedAt)
-                    .Take(3)
-                    .ToListAsync();
+                var passwordHistory = user.PasswordHistories.OrderByDescending(uph => uph.Password1ChangedAt).FirstOrDefault();
+                var oldPasswords = new[] { passwordHistory?.Password1, passwordHistory?.Password2, passwordHistory?.Password3 };
 
-                foreach (var oldPassword in recentPasswords)
+                foreach (var oldPasswordHash in oldPasswords)
                 {
-                    if (BCrypt.Net.BCrypt.Verify(changePasswordDto.NewPassword, oldPassword.PasswordHash))
+                    if (!string.IsNullOrEmpty(oldPasswordHash) && BCrypt.Net.BCrypt.Verify(changePasswordDto.NewPassword, oldPasswordHash))
                         return BadRequest(new { message = "Yeni şifreniz son 3 şifrenizden biri ile aynı olamaz." });
                 }
 
@@ -258,31 +255,37 @@ namespace quantiq.Server.Controllers
                 user.LastPasswordChange = DateTime.UtcNow;
                 _context.Users.Update(user);
 
-                // Şifre geçmişini yönet - maksimum 3 şifre tut
-                var allUserPasswords = await _context.UserPasswordHistories
-                    .Where(ph => ph.UserId == userId.Value)
-                    .OrderByDescending(ph => ph.ChangedAt)
-                    .ToListAsync();
-
-                if (allUserPasswords.Count >= 3)
+                // Şifre geçmişini güncelle
+                // En eski şifreyi güncelle
+                if (string.IsNullOrEmpty(passwordHistory.Password1))
                 {
-                    // En eski şifreyi bul ve sil
-                    var oldestPassword = allUserPasswords
-                        .OrderBy(ph => ph.ChangedAt)
-                        .First();
+                    passwordHistory.Password1 = newHashedPassword;
+                    passwordHistory.Password1ChangedAt = DateTime.UtcNow;
+                }
+                else if (string.IsNullOrEmpty(passwordHistory.Password2))
+                {
+                    passwordHistory.Password2 = newHashedPassword;
+                    passwordHistory.Password2ChangedAt = DateTime.UtcNow;
+                }
+                else if (string.IsNullOrEmpty(passwordHistory.Password3))
+                {
+                    passwordHistory.Password3 = newHashedPassword;
+                    passwordHistory.Password3ChangedAt = DateTime.UtcNow;
+                }
+                else
+                {
+                    // En eski şifreyi sil ve yeni şifreyi ekle
+                    passwordHistory.Password1 = passwordHistory.Password2;
+                    passwordHistory.Password1ChangedAt = passwordHistory.Password2ChangedAt ?? DateTime.UtcNow;
 
-                    _context.UserPasswordHistories.Remove(oldestPassword);
+                    passwordHistory.Password2 = passwordHistory.Password3;
+                    passwordHistory.Password2ChangedAt = passwordHistory.Password3ChangedAt ?? DateTime.UtcNow;
+
+                    passwordHistory.Password3 = newHashedPassword;
+                    passwordHistory.Password3ChangedAt = DateTime.UtcNow;
                 }
 
-                // Yeni şifreyi history'ye ekle
-                var passwordHistory = new UserPasswordHistory
-                {
-                    UserId = userId.Value,
-                    PasswordHash = newHashedPassword,
-                    ChangedAt = DateTime.UtcNow
-                };
-
-                _context.UserPasswordHistories.Add(passwordHistory);
+                _context.UserPasswordHistories.Update(passwordHistory);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 

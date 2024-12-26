@@ -17,9 +17,18 @@ namespace quantiq.Server.Models.Entities
         [ForeignKey("UserId")]
         public User User { get; set; }
 
+        // Son 3 Şifre
         [Required]
-        public string PasswordHash { get; set; } = string.Empty;
+        public string Password1 { get; set; } = string.Empty;
 
-        public DateTime ChangedAt { get; set; } = DateTime.UtcNow;
+        public DateTime Password1ChangedAt { get; set; } = DateTime.UtcNow;
+
+        public string? Password2 { get; set; }
+
+        public DateTime? Password2ChangedAt { get; set; }
+
+        public string? Password3 { get; set; }
+
+        public DateTime? Password3ChangedAt { get; set; }
     }
 }

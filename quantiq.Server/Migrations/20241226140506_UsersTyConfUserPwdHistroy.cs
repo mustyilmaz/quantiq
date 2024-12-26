@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace quantiq.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class UsersTyConfUserPwdHistroy : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -93,8 +93,12 @@ namespace quantiq.Server.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
-                    PasswordHash = table.Column<string>(type: "text", nullable: false),
-                    ChangedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()")
+                    Password1 = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Password1ChangedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    Password2 = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Password2ChangedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Password3 = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Password3ChangedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -125,10 +129,9 @@ namespace quantiq.Server.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserPasswordHistories_UserId_PasswordHash",
+                name: "IX_UserPasswordHistories_UserId",
                 table: "UserPasswordHistories",
-                columns: new[] { "UserId", "PasswordHash" },
-                unique: true);
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",

@@ -12,8 +12,8 @@ using quantiq.Server.Data;
 namespace quantiq.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241225163246_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241226140506_UsersTyConfUserPwdHistroy")]
+    partial class UsersTyConfUserPwdHistroy
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -233,22 +233,36 @@ namespace quantiq.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("ChangedAt")
+                    b.Property<string>("Password1")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("Password1ChangedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<string>("Password2")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime?>("Password2ChangedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Password3")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime?>("Password3ChangedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId", "PasswordHash")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserPasswordHistories", (string)null);
                 });

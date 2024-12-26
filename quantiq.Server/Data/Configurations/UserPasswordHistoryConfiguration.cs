@@ -15,22 +15,31 @@ namespace quantiq.Server.Data.Configurations
                    .ValueGeneratedOnAdd();
 
             // Alan Konfigürasyonları
-            builder.Property(uph => uph.PasswordHash)
-                   .IsRequired();
+            builder.Property(uph => uph.Password1)
+                   .IsRequired()
+                   .HasMaxLength(255);
 
-            builder.Property(uph => uph.ChangedAt)
+            builder.Property(uph => uph.Password1ChangedAt)
                    .IsRequired()
                    .HasDefaultValueUtcNow();
+
+            builder.Property(uph => uph.Password2)
+                   .HasMaxLength(255);
+
+            builder.Property(uph => uph.Password2ChangedAt)
+                   .HasDefaultValue(null);
+
+            builder.Property(uph => uph.Password3)
+                   .HasMaxLength(255);
+
+            builder.Property(uph => uph.Password3ChangedAt)
+                   .HasDefaultValue(null);
 
             // İlişkiler
             builder.HasOne(uph => uph.User)
                    .WithMany(u => u.PasswordHistories)
                    .HasForeignKey(uph => uph.UserId)
                    .OnDelete(DeleteBehavior.Cascade);
-
-            // Benzersiz İndeksler
-            builder.HasIndex(uph => new { uph.UserId, uph.PasswordHash })
-                   .IsUnique();
         }
     }
 
