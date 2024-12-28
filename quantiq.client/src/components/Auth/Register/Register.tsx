@@ -48,6 +48,7 @@ const Register: React.FC<RegisterProps> = ({ setNotification }) => {
   const [openKvkkModal, setOpenKvkkModal] = useState(false);
   const [openPrivacyModal, setOpenPrivacyModal] = useState(false);
   const [openUserAgreementModal, setOpenUserAgreementModal] = useState(false);
+  const [turnstileKey, setTurnstileKey] = useState(0);
 
   const validatePassword = (password: string) => {
     return {
@@ -175,6 +176,7 @@ const Register: React.FC<RegisterProps> = ({ setNotification }) => {
             });
             navigate("/user/login");
         } else {
+            setTurnstileKey(prevKey => prevKey + 1);
             setNotification({
               message: "Kayıt başarısız! Lütfen destek ile iletişime geçin.",
               type: 'error'
@@ -182,6 +184,7 @@ const Register: React.FC<RegisterProps> = ({ setNotification }) => {
         }
     } catch (error) {
         console.error("Registration error:", error);
+        setTurnstileKey(prevKey => prevKey + 1);
         setNotification({
           message: "Kayıt sırasında bir hata oluştu.",
           type: 'error'
@@ -378,6 +381,7 @@ const Register: React.FC<RegisterProps> = ({ setNotification }) => {
             </div>
 
             <Turnstile
+              key={turnstileKey}
               sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
               onVerify={handleTurnstileCallback}
               className={styles.turnstile}

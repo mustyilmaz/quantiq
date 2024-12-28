@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import styles from "./UserLogin.module.css";
 import { authService } from "../../../services/auth.service";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../../../hooks/useAuth';
 import Turnstile from "react-turnstile";
 
 interface LoginCredentials {
@@ -24,7 +23,6 @@ const UserLogin: React.FC = () => {
   
 
   const navigate = useNavigate();
-  const { updateAuthStatus } = useAuth();
   const [credentials, setCredentials] = useState<LoginCredentials>({
     emailOrPhone: '',
     password: '',
@@ -32,6 +30,7 @@ const UserLogin: React.FC = () => {
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [turnstileKey, setTurnstileKey] = useState(0);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -59,9 +58,11 @@ const UserLogin: React.FC = () => {
         navigate('/user/dashboard');
         window.location.reload();
       } else {
+        setTurnstileKey(prevKey => prevKey + 1);
         setError(response.error || 'Giriş başarısız');
       }
-    } catch (err) {
+    } catch {
+      setTurnstileKey(prevKey => prevKey + 1);
       setError('Bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setLoading(false);
@@ -112,6 +113,7 @@ const UserLogin: React.FC = () => {
               />
             </div>
             <Turnstile
+              key={turnstileKey}
               sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
               onVerify={handleTurnstileCallback}
               className={styles.turnstile}
