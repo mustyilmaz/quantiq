@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { authService } from '../services/AuthServiceforClient';
+import { authService } from '../services/auth.service';
 
 interface User {
   id: string;
@@ -38,8 +38,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         if (response) {
           setIsAuthenticated(true);
-          const userDetails = await authService.getUserDetails();
-          setUser(userDetails.user);
+          const response = await authService.getUserDetails();
+          if (response.success) {
+            setUser(response.user ?? null); 
+          } else {
+            localStorage.removeItem('auth_token');
+            setIsAuthenticated(false);
+            setUser(null);
+          }
         } else {
           localStorage.removeItem('auth_token');
           setIsAuthenticated(false);
@@ -58,9 +64,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkAuthStatus();
   }, []);
 
-  const updateAuthStatus = (status: boolean, newUser?: User) => {
+  const updateAuthStatus = (status: boolean, newUser: User | null = null) => {
     setIsAuthenticated(status);
-    setUser(newUser || null);
+    setUser(newUser ?? null);
   };
 
   return (

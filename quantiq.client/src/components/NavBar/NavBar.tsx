@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import { authService } from '../../services/AuthServiceforClient';
-import { useTheme } from '../../context/ThemeContext';
-import { Menu, X, Sun, Moon, ChevronDown } from 'lucide-react';
-import styles from './Navbar.module.css';
-import logo from '../../assets/logo.svg';
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { authService } from "../../services/auth.service";
+import { useTheme } from "../../context/ThemeContext";
+import { Menu, X, Sun, Moon, ChevronDown } from "lucide-react";
+import styles from "./Navbar.module.css";
+import logo from "../../assets/logo.svg";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -21,21 +21,26 @@ const Navbar = () => {
       setIsScrolled(window.scrollY > 20);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Auth durumunu kontrol et
   useEffect(() => {
     const checkToken = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token && !auth.isAuthenticated) {
         const response = await authService.verifyToken();
         if (response) {
-          const userDetails = await authService.getUserDetails();
-          auth.updateAuthStatus(true, userDetails.user.name);
+          const response = await authService.getUserDetails();
+          if (response.success) {
+            auth.updateAuthStatus(true, response.user);
+          } else {
+            localStorage.removeItem("auth_token");
+            auth.updateAuthStatus(false);
+          }
         } else {
-          localStorage.removeItem('auth_token');
+          localStorage.removeItem("auth_token");
         }
       }
     };
@@ -54,7 +59,7 @@ const Navbar = () => {
   // Loading durumunda minimal navbar göster
   if (auth.isLoading) {
     return (
-      <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
+      <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
         <div className={styles.navContainer}>
           <Link to="/" className={styles.logoContainer}>
             <img src={logo} alt="Quantiq Logo" className={styles.logo} />
@@ -65,7 +70,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
+    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={styles.navContainer}>
         <Link to="/" className={styles.logoContainer}>
           <img src={logo} alt="Quantiq Logo" className={styles.logo} />
@@ -75,43 +80,59 @@ const Navbar = () => {
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </div>
 
-        <div className={`${styles.navContent} ${isMenuOpen ? styles.active : ''}`}>
+        <div
+          className={`${styles.navContent} ${isMenuOpen ? styles.active : ""}`}
+        >
           <ul className={styles.navLinks}>
             <li>
-              <Link 
-                to="/" 
-                className={location.pathname === '/' ? styles.active : ''}
+              <Link
+                to="/"
+                className={location.pathname === "/" ? styles.active : ""}
                 onClick={closeMenu}
               >
                 Ana Sayfa
               </Link>
             </li>
             <li className={styles.dropdownContainer}>
-              <button 
+              <button
                 className={styles.dropdownTrigger}
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
                 Çözümler <ChevronDown size={16} />
               </button>
-              <div className={`${styles.dropdown} ${isDropdownOpen ? styles.show : ''}`}>
-                <Link to="/solutions/e-commerce" onClick={closeMenu}>E-Ticaret</Link>
-                <Link to="/solutions/marketplace" onClick={closeMenu}>Pazar Yeri</Link>
-                <Link to="/solutions/analytics" onClick={closeMenu}>Analitik</Link>
+              <div
+                className={`${styles.dropdown} ${
+                  isDropdownOpen ? styles.show : ""
+                }`}
+              >
+                <Link to="/solutions/e-commerce" onClick={closeMenu}>
+                  E-Ticaret
+                </Link>
+                <Link to="/solutions/marketplace" onClick={closeMenu}>
+                  Pazar Yeri
+                </Link>
+                <Link to="/solutions/analytics" onClick={closeMenu}>
+                  Analitik
+                </Link>
               </div>
             </li>
             <li>
-              <Link 
-                to="/pricing" 
-                className={location.pathname === '/pricing' ? styles.active : ''}
+              <Link
+                to="/pricing"
+                className={
+                  location.pathname === "/pricing" ? styles.active : ""
+                }
                 onClick={closeMenu}
               >
                 Fiyatlandırma
               </Link>
             </li>
             <li>
-              <Link 
-                to="/contact" 
-                className={location.pathname === '/contact' ? styles.active : ''}
+              <Link
+                to="/contact"
+                className={
+                  location.pathname === "/contact" ? styles.active : ""
+                }
                 onClick={closeMenu}
               >
                 İletişim
@@ -120,12 +141,12 @@ const Navbar = () => {
           </ul>
 
           <div className={styles.navActions}>
-            <button 
-              className={styles.themeToggle} 
+            <button
+              className={styles.themeToggle}
               onClick={toggleTheme}
               aria-label="Toggle theme"
             >
-              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+              {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
             </button>
 
             {auth.isAuthenticated && auth.user ? (
@@ -136,10 +157,18 @@ const Navbar = () => {
               </div>
             ) : (
               <div className={styles.authButtons}>
-                <Link to="/user/login" className={styles.loginButton} onClick={closeMenu}>
+                <Link
+                  to="/user/login"
+                  className={styles.loginButton}
+                  onClick={closeMenu}
+                >
                   Giriş Yap
                 </Link>
-                <Link to="/register" className={styles.registerButton} onClick={closeMenu}>
+                <Link
+                  to="/register"
+                  className={styles.registerButton}
+                  onClick={closeMenu}
+                >
                   Ücretsiz Başla
                 </Link>
               </div>
