@@ -22,6 +22,7 @@ import ProtectedRoute from "./routes/ProtectedUserRoute";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import "./App.css";
+import NewsStrip from "./components/NewsStrip/NewsStrip";
 
 
 
@@ -35,7 +36,9 @@ const App = () => {
     <AuthProvider>
       <ThemeProvider>
         <Router>
+        <NewsStrip />
           <Navbar />
+          
           {notification && (
             <Notification
               message={notification.message}

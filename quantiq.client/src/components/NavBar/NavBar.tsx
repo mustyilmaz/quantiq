@@ -70,7 +70,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
+    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""} z-30`}>
       <div className={styles.navContainer}>
         <Link to="/" className={styles.logoContainer}>
           <img src={logo} alt="Quantiq Logo" className={styles.logo} />
@@ -84,49 +84,10 @@ const Navbar = () => {
           className={`${styles.navContent} ${isMenuOpen ? styles.active : ""}`}
         >
           <ul className={styles.navLinks}>
-            <li>
-              <Link
-                to="/"
-                className={location.pathname === "/" ? styles.active : ""}
-                onClick={closeMenu}
-              >
-                Ana Sayfa
-              </Link>
-            </li>
-            <li className={styles.dropdownContainer}>
-              <button
-                className={styles.dropdownTrigger}
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              >
-                Çözümler <ChevronDown size={16} />
-              </button>
-              <div
-                className={`${styles.dropdown} ${
-                  isDropdownOpen ? styles.show : ""
-                }`}
-              >
-                <Link to="/solutions/e-commerce" onClick={closeMenu}>
-                  E-Ticaret
-                </Link>
-                <Link to="/solutions/marketplace" onClick={closeMenu}>
-                  Pazar Yeri
-                </Link>
-                <Link to="/solutions/analytics" onClick={closeMenu}>
-                  Analitik
-                </Link>
-              </div>
-            </li>
-            <li>
-              <Link
-                to="/pricing"
-                className={
-                  location.pathname === "/pricing" ? styles.active : ""
-                }
-                onClick={closeMenu}
-              >
-                Fiyatlandırma
-              </Link>
-            </li>
+          <li><a href="/" className="text-gray-400 hover:text-white">Ana Sayfa</a></li>
+
+            <li><a href="#pricing" className="text-gray-400 hover:text-white">Fiyatlandırma</a></li>
+
             <li>
               <Link
                 to="/contact"
