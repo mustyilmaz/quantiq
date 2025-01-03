@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
-import Navbar from '../../NavBar/NavBar';
+import Navbar from '../../LandingPage/NavBar/NavBar';
 import Footer from '../../Footer/Footer';
-import NewsStrip from '../../NewsStrip/NewsStrip';
+import NewsStrip from '../../LandingPage/NewsStrip/NewsStrip';
 import Notification from '../../Notification/Notification';
 
 interface MainLayoutProps {

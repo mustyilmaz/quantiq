@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import styles from "./UserLogin.module.css";
 import { useNavigate } from "react-router-dom";
 import Turnstile from "react-turnstile";
@@ -10,7 +10,11 @@ interface LoginCredentials {
   turnstileToken: string;
 }
 
-const UserLogin: React.FC = () => {
+interface UserLoginProps {
+  setNotification: (notification: { message: string; type: 'success' | 'error' }) => void;
+}
+
+const UserLogin: React.FC<UserLoginProps> = ({ setNotification }) => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState<LoginCredentials>({
@@ -18,7 +22,6 @@ const UserLogin: React.FC = () => {
     password: '',
     turnstileToken: ''
   });
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [turnstileKey, setTurnstileKey] = useState(0);
 
@@ -29,11 +32,6 @@ const UserLogin: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setCredentials((prev) => ({ ...prev, [id]: value }));
-    if (id === 'emailOrPhone') {
-      const inputType = value.includes('@') ? 'email' : 'text';
-      e.target.type = inputType;
-    }
-    setError(null);
   };
 
   const handleTurnstileCallback = (token: string) => {
@@ -43,27 +41,54 @@ const UserLogin: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
+
+    if (!credentials.turnstileToken) {
+      setNotification({
+        message: "Lütfen Turnstile doğrulamasını tamamlayın!",
+        type: 'error'
+      });
+      setLoading(false);
+      setTurnstileKey(prevKey => prevKey + 1);
+      return;
+    }
 
     try {
-      await login(credentials);
-      navigate('/user/dashboard');
+      const response = await login(credentials);
+      if (response.success) {
+        setNotification({
+          message: "Giriş başarılı! Yönlendiriliyorsunuz.",
+          type: 'success'
+        });
+        navigate('/user/dashboard');
+      } else {
+        setTurnstileKey(prevKey => prevKey + 1);
+        setNotification({
+          message: response.error || 'Giriş işlemi başarısız oldu.',
+          type: 'error'
+        });
+      }
     } catch {
       setTurnstileKey(prevKey => prevKey + 1);
-      setError('Bir hata oluştu. Lütfen tekrar deneyin.');
+      setNotification({
+        message: "Bir hata oluştu. Lütfen tekrar deneyin.",
+        type: 'error'
+      });
     } finally {
       setLoading(false);
     }
   };
 
-   const handleGoogleLogin = async () => {
+  const handleGoogleLogin = async () => {
     alert("Google ile giriş özelliği henüz tamamlanmamıştır.");
     /* try {
       await getCsrfToken();
       window.location.href = "/api/Auth/google-login";
     } catch (error) {
       const loginError = error as LoginError;
-      setError(loginError.message || "Google ile giriş başarısız oldu");
+      setNotification({
+        message: loginError.message || "Google ile giriş başarısız oldu",
+        type: 'error'
+      });
     } */
   };
 
@@ -71,17 +96,17 @@ const UserLogin: React.FC = () => {
     <div className={styles.loginPage}>
       <div className={styles.loginContainer}>
         <div className={styles.loginWrapper}>
-          <h1 className={styles.loginTitle}>Welcome Back</h1>
+          <h1 className={styles.loginTitle}>Tekrar Hoş Geldiniz</h1>
           <form onSubmit={handleLogin} className={styles.loginForm}>
             <div className={styles.formGroup}>
               <label htmlFor="emailOrPhone" className={styles.formLabel}>
-                Email or Phone Number
+                Email veya Telefon Numarası
               </label>
               <input
                 type="text"
                 id="emailOrPhone"
                 className={styles.formInput}
-                placeholder="Enter your email or phone number"
+                placeholder="Email veya telefon numaranızı girin"
                 value={credentials.emailOrPhone}
                 onChange={handleInputChange}
                 required
@@ -89,13 +114,13 @@ const UserLogin: React.FC = () => {
             </div>
             <div className={styles.formGroup}>
               <label htmlFor="password" className={styles.formLabel}>
-                Password
+                Şifre
               </label>
               <input
                 type="password"
                 id="password"
                 className={styles.formInput}
-                placeholder="Enter your password"
+                placeholder="Şifrenizi girin"
                 value={credentials.password}
                 onChange={handleInputChange}
                 required
@@ -107,30 +132,29 @@ const UserLogin: React.FC = () => {
               onVerify={handleTurnstileCallback}
               className={styles.turnstile}
             />
-            {error && <div className={styles.errorMessage}>{error}</div>}
             <button
               type="submit"
               className={styles.submitButton}
               disabled={loading}
             >
-              {loading ? "Logging In..." : "Login"}
+              {loading ? "Giriş Yapılıyor..." : "Giriş Yap"}
             </button>
             <div className={styles.divider}>
-              <span>or</span>
+              <span>veya</span>
             </div>
             <button
               type="button"
               className={styles.googleButton}
               onClick={handleGoogleLogin}
             >
-              Login with Google
+              Google ile Giriş Yap
             </button>
             <div className={styles.footerLinks}>
               <a href="/forgot-password" className={styles.forgotPassword}>
-                Forgot Password?
+                Şifremi Unuttum?
               </a>
               <a href="/register" className={styles.registerLink}>
-                Create an Account
+                Hesap Oluştur
               </a>
             </div>
           </form>
@@ -138,10 +162,9 @@ const UserLogin: React.FC = () => {
       </div>
       <div className={styles.bannerContainer}>
         <div className={styles.bannerContent}>
-          <h2>Welcome Back!</h2>
+          <h2>Tekrar Hoş Geldiniz!</h2>
           <p>
-            Secure login with multiple authentication options. Protect your
-            account with our advanced security features.
+            Güvenli bir şekilde hesabınıza giriş yapın ve avantajlardan yararlanın.
           </p>
         </div>
       </div>

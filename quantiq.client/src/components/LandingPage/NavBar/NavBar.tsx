@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
-import { authService } from "../../services/auth.service";
+import { useAuth } from "../../../hooks/useAuth";
 // import { useTheme } from "../../context/ThemeContext";
-import { Menu, X, Sun, Moon } from "lucide-react";
-import logo from "../../assets/logo.svg";
+import { Menu, X} from "lucide-react";
+import logo from "../../../assets/logo.svg";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -21,28 +20,6 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  useEffect(() => {
-    const checkToken = async () => {
-      const token = localStorage.getItem("token");
-      if (token && !auth.isAuthenticated) {
-        const response = await authService.verifyToken();
-        if (response) {
-          const response = await authService.getUserDetails();
-          if (response.success) {
-            auth.updateAuthStatus(true, response.user);
-          } else {
-            localStorage.removeItem("auth_token");
-            auth.updateAuthStatus(false);
-          }
-        } else {
-          localStorage.removeItem("auth_token");
-        }
-      }
-    };
-
-    checkToken();
-  }, [auth.isAuthenticated]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

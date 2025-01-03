@@ -42,7 +42,7 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               <li><a href="#" className="text-gray-400 hover:text-white">Yardım Merkezi</a></li>
               <li><a href="#" className="text-gray-400 hover:text-white">Dokümantasyon</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">API Referansı</a></li>
+              <li><a href="http://localhost:5146/swagger/index.html" target="_blank" className="text-gray-400 hover:text-white">API Referansı</a></li>
               <li><a href="#" className="text-gray-400 hover:text-white">Bize Ulaşın</a></li>
             </ul>
           </div>

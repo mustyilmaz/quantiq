@@ -17,7 +17,7 @@ interface LoginCredentials {
   turnstileToken: string;
 }
 
-interface AuthResponse {
+export interface AuthResponse {
   success: boolean;
   token?: string;
   error?: string;
@@ -64,7 +64,6 @@ export class AuthService {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
         body: JSON.stringify(credentials)
       });
 
@@ -72,13 +71,19 @@ export class AuthService {
         const errorText = await response.text();
         try {
           const errorJson = JSON.parse(errorText);
-          throw new Error(errorJson.message || 'Giriş işlemi başarısız oldu');
-        } catch (error) {
-          throw new Error(errorText || 'Giriş işlemi başarısız oldu');
+          return { success: false, error: errorJson.message || 'Giriş işlemi başarısız oldu' };
+        } catch {
+          return { success: false, error: errorText || 'Giriş işlemi başarısız oldu' };
         }
       }
 
-      return { success: true };
+      const data = await response.json();
+      if (data.success) {
+        localStorage.setItem('session_id', data.sessionId);
+        return { success: true, token: data.sessionId };
+      } else {
+        return { success: false, error: data.message || 'Giriş işlemi başarısız oldu' };
+      }
     } catch (error) {
       console.error('Giriş işlemi hatası:', error);
       return { success: false, error: 'Giriş işlemi başarısız oldu' };

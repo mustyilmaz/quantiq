@@ -180,7 +180,7 @@ namespace quantiq.Server.Controllers
         {
             if (!await VerifyTurnstile(userLoginDto.TurnstileToken))
             {
-                return BadRequest("Invalid Turnstile");
+                return Ok(new { success = false, message = "Robot doğrulama hatası" });
             }
 
             var user = await _context.Users.SingleOrDefaultAsync(u =>
@@ -189,12 +189,12 @@ namespace quantiq.Server.Controllers
 
             if (user == null)
             {
-                return NotFound("User not found!");
+                return Ok(new { success = false, message = "Böyle bir kullanıcı bulunamadı. Lütfen tekrar deneyiniz." });
             }
 
             if (!BCrypt.Net.BCrypt.Verify(userLoginDto.Password, user.PasswordHash))
             {
-                return Unauthorized("Invalid password");
+                return Ok(new { success = false, message = "Geçersiz şifre. Lütfen tekrar deneyiniz." });
             }
 
             user.LastLoginAt = DateTime.UtcNow;
@@ -214,7 +214,7 @@ namespace quantiq.Server.Controllers
                 SameSite = SameSiteMode.Strict
             });
 
-            return Ok(new { message = "Giriş başarılı" });
+            return Ok(new { success = true, message = "Giriş başarılı" });
         }
 
         [HttpPost("logout")]

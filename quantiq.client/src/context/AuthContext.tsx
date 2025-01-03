@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { AuthService } from '../services/auth.service';
+import { AuthService, AuthResponse } from '../services/auth.service';
 
 interface User {
   id: string;
@@ -20,7 +20,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
   isLoading: boolean;
-  login: (credentials: LoginCredentials) => Promise<void>;
+  login: (credentials: LoginCredentials) => Promise<AuthResponse>;
   logout: () => Promise<void>;
 }
 
@@ -28,7 +28,7 @@ export const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   user: null,
   isLoading: true,
-  login: async () => {},
+  login: async () => ({ success: false, error: 'Varsayılan login fonksiyonu kullanıldı.' }),
   logout: async () => {},
 });
 
@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkAuthStatus();
   }, []);
 
-  const login = async (credentials: LoginCredentials) => {
+  const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
     const response = await authService.login(credentials);
     if (response.success) {
       const userResponse = await authService.getUserDetails();
@@ -70,6 +70,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(userResponse.user);
       }
     }
+    console.log("AuthContext login response", response);
+    return response;
   };
 
   const logout = async () => {

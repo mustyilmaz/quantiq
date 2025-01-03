@@ -9,7 +9,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import UserDashboardLayout from "./components/Layouts/UserDashboardLayout/UserDashboardLayout";
 
 //Components
-import Home from "./components/Home/Home";
+import Home from "./components/LandingPage/Home/Home";
 import NotFound from "./components/NotFound/NotFound";
 
 //Public Components
@@ -44,7 +44,7 @@ const App = () => {
           <Routes>
             <Route element={<MainLayout notification={notification} onCloseNotification={() => setNotification(null)} />}>
               <Route path="/" element={<Home />} />
-              <Route path="/user/login" element={<UserLogin />} />
+              <Route path="/user/login" element={<UserLogin setNotification={setNotification} />} />
               <Route path="/register" element={<Register setNotification={setNotification} />} />
               <Route path="/commission-calculator" element={<CommissionCalculator />} />
             </Route>

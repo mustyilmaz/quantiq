@@ -52,6 +52,7 @@ namespace quantiq.Server
                     };
                 });
 
+            builder.Services.AddSwaggerGen();
             builder.Services.AddAntiforgery(options =>
             {
                 options.Cookie.HttpOnly = true;
@@ -61,7 +62,7 @@ namespace quantiq.Server
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            
 
             // Veri tabanı bağlamı
             builder.Services.AddDbContext<AppDbContext>(options =>
@@ -77,21 +78,22 @@ namespace quantiq.Server
             // CORS kullanımı
             app.UseCors("AllowLocalhost");
 
-            // Authentication ve Authorization middleware'lerini ekleyin
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            // Swagger middleware'ini ekleyin
+            // Swagger middleware'ini ekleyin geliştirme ortamında
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quantiq API V1");
-                    c.RoutePrefix = string.Empty;
+                    c.RoutePrefix = "swagger";
                 });
             }
 
+            // Authentication ve Authorization middleware'lerini ekleyin
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            // Controllers'ı haritalayın
             app.MapControllers();
 
             app.Run();
