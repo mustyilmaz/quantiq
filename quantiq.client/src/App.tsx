@@ -1,78 +1,68 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useState } from 'react';
+import { useState } from "react";
 
-import Navbar from "./components/NavBar/NavBar";
-import Notification from "./components/Notification/Notification";
-import Footer from "./components/Footer/Footer";
-import NotFound from "./components/NotFound/NotFound";
+//Contexts
+import { AuthProvider } from "./context/AuthContext";
+import { ThemeProvider } from "./context/ThemeContext";
+
+//Layouts
+import UserDashboardLayout from "./components/Layouts/UserDashboardLayout/UserDashboardLayout";
+
+//Components
 import Home from "./components/Home/Home";
+import NotFound from "./components/NotFound/NotFound";
+
+//Public Components
 import CommissionCalculator from "./components/CommissionCalculator/CommissionCalculator";
 
-//Auth
+//Auth Components
 import Register from "./components/Auth/Register/Register";
 import UserLogin from "./components/Auth/UserLogin/UserLogin";
 
 //UserDashboard
 import UserHome from "./components/UserDashboard/UserHome/UserHome";
-import UserDashboardLayout from "./components/Layouts/UserDashboardLayout";
 import ChangePassword from "./components/UserDashboard/ChangePassword/ChangePassword";
 import InfoAPI from "./components/UserDashboard/InfoAPI/InfoAPI";
-//Routes
-import ProtectedRoute from "./routes/ProtectedUserRoute";
-import { AuthProvider } from "./context/AuthContext";
-import { ThemeProvider } from "./context/ThemeContext";
+
+
+//Routes 
+import ProtectedUserRoute from "./routes/ProtectedUserRoute";
+import MainLayout from "./components/Layouts/MainLayout/MainLayout";
+
+// Types
+import { NotificationType } from './types/notification';
+
 import "./App.css";
-import NewsStrip from "./components/NewsStrip/NewsStrip";
-
-
 
 const App = () => {
-  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [notification, setNotification] = useState<NotificationType>(null);
 
-  const handleCloseNotification = () => {
-    setNotification(null);
-  };
   return (
-    <AuthProvider>
-      <ThemeProvider>
+    <ThemeProvider>
+      <AuthProvider>
         <Router>
-        <NewsStrip />
-          <Navbar />
-          
-          {notification && (
-            <Notification
-              message={notification.message}
-              type={notification.type}
-              onClose={handleCloseNotification}
-            />
-          )}
           <Routes>
-            <Route path="*" element={<NotFound />} />
-            <Route path="/" element={<Home />} />
-            <Route path="register" element={<Register setNotification={setNotification} />} />
-            <Route path="user/login" element={<UserLogin />} />
-            <Route
-              path="/commission-calculator"
-              element={<CommissionCalculator />}
-            />
-            {/* Dashboard Routes */}
-            <Route
-              path="/user"
-              element={
-                <ProtectedRoute>
-                  <UserDashboardLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route path="dashboard" element={<UserHome />} />
-              <Route path="api-information" element={<InfoAPI />} />
-              <Route path="change-password" element={<ChangePassword setNotification={setNotification}/>} />
+            <Route element={<MainLayout notification={notification} onCloseNotification={() => setNotification(null)} />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/user/login" element={<UserLogin />} />
+              <Route path="/register" element={<Register setNotification={setNotification} />} />
+              <Route path="/commission-calculator" element={<CommissionCalculator />} />
             </Route>
+
+            <Route element={<ProtectedUserRoute />}>
+              <Route element={<UserDashboardLayout notification={notification} onCloseNotification={() => setNotification(null)} />}>
+                <Route path="/user/dashboard" element={<UserHome />} />
+                <Route path="/user/change-password" element={<ChangePassword setNotification={setNotification} />} />
+                <Route path="/user/api-information" element={<InfoAPI />} />
+              </Route>
+            </Route>
+
+            <Route path="*" element={<NotFound />} />
           </Routes>
-          <Footer />
+          
         </Router>
-      </ThemeProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 };
 

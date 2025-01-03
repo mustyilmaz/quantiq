@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styles from "./UserLogin.module.css";
-import { authService } from "../../../services/auth.service";
 import { useNavigate } from "react-router-dom";
 import Turnstile from "react-turnstile";
+import { AuthContext } from '../../../context/AuthContext';
 
 interface LoginCredentials {
   emailOrPhone: string;
@@ -10,18 +10,8 @@ interface LoginCredentials {
   turnstileToken: string;
 }
 
-interface LoginError {
-  message: string;
-}
-
-
 const UserLogin: React.FC = () => {
-  useEffect(() => {
-    document.title = "Quantiq - E-Commerce Çözümleri - Giriş Yap";
-  }, []);
-
-  
-
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState<LoginCredentials>({
     emailOrPhone: '',
@@ -31,6 +21,10 @@ const UserLogin: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [turnstileKey, setTurnstileKey] = useState(0);
+
+  useEffect(() => {
+    document.title = "Quantiq - E-Commerce Çözümleri - Giriş Yap";
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -52,15 +46,8 @@ const UserLogin: React.FC = () => {
     setError(null);
 
     try {
-      const response = await authService.login(credentials);
-      
-      if (response.success && response.token) {
-        navigate('/user/dashboard');
-        window.location.reload();
-      } else {
-        setTurnstileKey(prevKey => prevKey + 1);
-        setError(response.error || 'Giriş başarısız');
-      }
+      await login(credentials);
+      navigate('/user/dashboard');
     } catch {
       setTurnstileKey(prevKey => prevKey + 1);
       setError('Bir hata oluştu. Lütfen tekrar deneyin.');
@@ -69,13 +56,15 @@ const UserLogin: React.FC = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
+   const handleGoogleLogin = async () => {
+    alert("Google ile giriş özelliği henüz tamamlanmamıştır.");
+    /* try {
+      await getCsrfToken();
       window.location.href = "/api/Auth/google-login";
     } catch (error) {
       const loginError = error as LoginError;
       setError(loginError.message || "Google ile giriş başarısız oldu");
-    }
+    } */
   };
 
   return (

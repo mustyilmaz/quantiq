@@ -11,50 +11,38 @@ namespace quantiq.Server.Controllers
     {
         private readonly AppDbContext _context;
         private readonly AuthService _authService;
+        private readonly SessionService _sessionService;
 
-        public UserController(AppDbContext context, AuthService authService)
+        public UserController(AppDbContext context, AuthService authService, SessionService sessionService)
         {
             _context = context;
             _authService = authService;
+            _sessionService = sessionService;
         }
 
         [HttpGet("details")]
         public async Task<IActionResult> GetUserDetails()
         {
-            var authHeader = Request.Headers["Authorization"].FirstOrDefault();
-            if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            var sessionId = Request.Cookies["session_id"];
+            if (string.IsNullOrEmpty(sessionId))
             {
-                return Unauthorized(new { message = "Token bulunamadı" });
+                return Unauthorized(new { message = "Oturum bulunamadı" });
             }
 
-            var token = authHeader.Substring("Bearer ".Length);
-            if (!_authService.ValidateToken(token))
+            var session = await _sessionService.ValidateSession(sessionId, HttpContext.Connection.RemoteIpAddress?.ToString() ?? "", Request.Headers["User-Agent"].ToString());
+            if (!session)
             {
-                return Unauthorized(new { message = "Geçersiz token" });
+                return Unauthorized(new { message = "Geçersiz oturum" });
             }
 
-            var userId = _authService.GetUserIdFromToken(token);
-            if (!userId.HasValue)
+            var sessionInfo = await _sessionService.GetSession(sessionId);
+            
+            if (sessionInfo == null)
             {
-                return Unauthorized(new { message = "Token'dan kullanıcı bilgisi alınamadı" });
-            }
+                return NotFound(new { message = "Kullanıcı bulunamadı" });
+            }  
 
-            var user = await _context.Users
-                .Select(u => new
-                {
-                    u.Id,
-                    u.Name,
-                    u.Surname,
-                    u.Email,
-                    u.PhoneNumber,
-                    u.LastLoginAt,
-                    u.Package,
-                    u.IsEmailVerified,
-                    u.IsPhoneNumberVerified,
-                    u.IsProfileRestricted
-                })
-                .FirstOrDefaultAsync(u => u.Id == userId.Value);
-
+            var user = await _context.Users.FindAsync(sessionInfo.UserId);
             if (user == null)
             {
                 return NotFound(new { message = "Kullanıcı bulunamadı" });

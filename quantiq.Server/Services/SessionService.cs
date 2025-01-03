@@ -15,13 +15,31 @@ namespace quantiq.Server.Services
             _context = context;
         }
 
-        public async Task<UserSession> CreateSession(int userId)
+        public async Task<UserSession> CreateSession(int userId, string ipAddress, string userAgent)
         {
+            // Mevcut aktif oturumları sonlandır
+            var activeSessions = await _context.UserSessions
+                .Where(s => s.UserId == userId && s.IsActive)
+                .ToListAsync();
+
+            foreach (var histSession in activeSessions)
+            {
+                histSession.IsActive = false;
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Yeni oturum oluştur
             var session = new UserSession
             {
                 UserId = userId,
                 SessionId = Guid.NewGuid().ToString(),
-                ExpiresAt = DateTime.UtcNow.AddHours(1) // 1 saatlik oturum süresi
+                ExpiresAt = DateTime.UtcNow.AddHours(1),
+                CreatedAt = DateTime.UtcNow,
+                LastAccessedAt = DateTime.UtcNow,
+                IPAddress = ipAddress,
+                UserAgent = userAgent,
+                IsActive = true
             };
 
             _context.UserSessions.Add(session);
@@ -30,12 +48,25 @@ namespace quantiq.Server.Services
             return session;
         }
 
-        public async Task<bool> ValidateSession(string sessionId)
+        public async Task<bool> ValidateSession(string sessionId, string ipAddress, string userAgent)
         {
             var session = await _context.UserSessions
-                .FirstOrDefaultAsync(s => s.SessionId == sessionId && s.ExpiresAt > DateTime.UtcNow);
+                .FirstOrDefaultAsync(s =>
+                    s.SessionId == sessionId &&
+                    s.ExpiresAt > DateTime.UtcNow &&
+                    s.IsActive &&
+                    s.IPAddress == ipAddress &&
+                    s.UserAgent == userAgent
+                );
 
-            return session != null;
+            if (session != null)
+            {
+                session.LastAccessedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
         }
 
         public async Task InvalidateSession(string sessionId)
@@ -45,9 +76,28 @@ namespace quantiq.Server.Services
 
             if (session != null)
             {
-                _context.UserSessions.Remove(session);
+                session.IsActive = false;
+                _context.UserSessions.Update(session);
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<UserSession?> GetSession(string sessionId)
+        {
+            return await _context.UserSessions
+                .Include(s => s.User)
+                .FirstOrDefaultAsync(s => s.SessionId == sessionId && s.ExpiresAt > DateTime.UtcNow && s.IsActive);
+        }
+
+        public async Task CleanUpOldSessions()
+        {
+            var expirationDate = DateTime.UtcNow.AddDays(-30);
+            var oldSessions = await _context.UserSessions
+                .Where(s => s.CreatedAt < expirationDate)
+                .ToListAsync();
+
+            _context.UserSessions.RemoveRange(oldSessions);
+            await _context.SaveChangesAsync();
+        }
     }
-} 
+}

@@ -1,24 +1,23 @@
-import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { authService } from '../services/auth.service';
+import { useContext } from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
-const ProtectedUserRoute = ({ children }: { children: React.ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+const ProtectedUserRoute = () => {
+  const { isAuthenticated, isLoading } = useContext(AuthContext);
 
-  useEffect(() => {
-    const verifyAuth = async () => {
-      const isValid = await authService.verifyToken();
-      setIsAuthenticated(isValid);
-    };
-
-    verifyAuth();
-  }, []);
-
-  if (isAuthenticated === null) {
-    return <div>Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
   }
 
-  return isAuthenticated ? <>{children}</> : <Navigate to="/user/login" />;
+  return isAuthenticated ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/user/login" replace state={{ from: location.pathname }} />
+  );
 };
 
 export default ProtectedUserRoute;

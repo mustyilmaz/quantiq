@@ -64,6 +64,7 @@ export class AuthService {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(credentials)
       });
 
@@ -77,36 +78,38 @@ export class AuthService {
         }
       }
 
-      const contentType = response.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
-        throw new Error("Sunucudan geçersiz yanıt alındı");
-      }
-
-      const data = await response.json();
-      
-      if (data.token) {
-        localStorage.setItem('auth_token', data.token);
-        return { success: true, token: data.token };
-      } else {
-        throw new Error('Token bulunamadı');
-      }
+      return { success: true };
     } catch (error) {
       console.error('Giriş işlemi hatası:', error);
       return { success: false, error: 'Giriş işlemi başarısız oldu' };
     }
   }
 
-  async getUserDetails(): Promise<UserDetailsResponse> {
+  async logout(): Promise<boolean> {
     try {
-      const token = localStorage.getItem('auth_token');
-      if (!token) {
-        return { success: false, error: 'Token bulunamadı' };
+      const response = await fetch(`${this.API_URL}/Auth/logout`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        return true;
       }
 
+      return false;
+    } catch (error) {
+      console.error('Çıkış işlemi hatası:', error);
+      return false;
+    }
+  }
+
+  async getUserDetails(): Promise<UserDetailsResponse> {
+    try {
       const response = await fetch(`${this.API_URL}/User/details`, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
       });
 
       if (!response.ok) {
@@ -119,10 +122,6 @@ export class AuthService {
       console.error('Kullanıcı bilgileri alma hatası:', error);
       return { success: false, error: 'Kullanıcı bilgileri alınamadı' };
     }
-  }
-
-  logout(): void {
-    localStorage.removeItem('auth_token');
   }
 }
 

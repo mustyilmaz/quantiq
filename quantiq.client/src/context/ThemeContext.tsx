@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
 
@@ -14,7 +14,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [theme, setTheme] = useState<Theme>(() => {
     const savedTheme = localStorage.getItem("theme");
-    return (savedTheme as Theme) || "light";
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    
+    return (savedTheme as Theme) || (prefersDark ? "dark" : "light");
   });
 
   useEffect(() => {

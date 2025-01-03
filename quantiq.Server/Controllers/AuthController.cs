@@ -6,6 +6,7 @@ using quantiq.Server.DTOs.Auth;
 using quantiq.Server.DTOs;
 using quantiq.Server.Models.Entities;
 using quantiq.Server.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace quantiq.Server.Controllers
 {
@@ -17,55 +18,64 @@ namespace quantiq.Server.Controllers
         private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _clientFactory;
         private readonly AuthService _authService;
+        private readonly SessionService _sessionService;
 
         public AuthController(
             AppDbContext context,
             IConfiguration configuration,
             IHttpClientFactory clientFactory,
-            AuthService authService)
+            AuthService authService,
+            SessionService sessionService)
         {
             _context = context;
             _configuration = configuration;
             _clientFactory = clientFactory;
             _authService = authService;
+            _sessionService = sessionService;
         }
 
         private async Task<bool> VerifyTurnstile(string token)
         {
             try
             {
-                var secretKey = _configuration["Turnstile:SecretKey"];
-
-                if (string.IsNullOrEmpty(secretKey) || string.IsNullOrEmpty(token))
+                var request = new HttpRequestMessage(HttpMethod.Post, "https://challenges.cloudflare.com/turnstile/v0/siteverify");
+                var content = new FormUrlEncodedContent(new[]
                 {
-                    return false;
-                }
+                    new KeyValuePair<string, string>("secret", _configuration["Turnstile:SecretKey"]!),
+                    new KeyValuePair<string, string>("response", token),
+                    new KeyValuePair<string, string>("remoteip", HttpContext.Connection.RemoteIpAddress?.ToString() ?? "")
+                });
+                request.Content = content;
 
                 var client = _clientFactory.CreateClient();
-                var response = await client.PostAsync(
-                    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-                    new FormUrlEncodedContent(new[]
-                    {
-                        new KeyValuePair<string, string>("secret", secretKey),
-                        new KeyValuePair<string, string>("response", token)
-                    })
-                );
+                var response = await client.SendAsync(request);
+                response.EnsureSuccessStatusCode();
 
-                if (!response.IsSuccessStatusCode)
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
                 {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                var turnstileResponse = JsonSerializer.Deserialize<TurnstileResponse>(responseContent, options);
+
+                if (turnstileResponse == null)
+                {
+                    Console.WriteLine("Deserializasyon sonucu null.");
                     return false;
                 }
 
-                var content = await response.Content.ReadAsStringAsync();
-                var turnstileResponse = JsonSerializer.Deserialize<TurnstileResponse>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
 
-                return turnstileResponse?.Success ?? false;
+                return turnstileResponse.Success;
             }
-            catch (Exception)
+            catch (JsonException jsonEx)
             {
+                Console.WriteLine("JSON Deserializasyon hatası: " + jsonEx.Message);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Turnstile doğrulama hatası: " + ex.Message);
                 return false;
             }
         }
@@ -168,7 +178,6 @@ namespace quantiq.Server.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto userLoginDto)
         {
-            Console.WriteLine("api tarafında login çağrıldı");
             if (!await VerifyTurnstile(userLoginDto.TurnstileToken))
             {
                 return BadRequest("Invalid Turnstile");
@@ -191,23 +200,34 @@ namespace quantiq.Server.Controllers
             user.LastLoginAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
-            var token = _authService.GenerateJwtToken(user.Id);
-            return Ok(new { token });
+            // Oturum oluşturma
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "";
+            var userAgent = Request.Headers["User-Agent"].ToString();
+            var session = await _sessionService.CreateSession(user.Id, ipAddress, userAgent);
+
+            // HttpOnly ve Secure özelliklerine sahip çerez oluşturma
+            Response.Cookies.Append("session_id", session.SessionId, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false, // http durumu için false yapıyoruz
+                Expires = session.ExpiresAt,
+                SameSite = SameSiteMode.Strict
+            });
+
+            return Ok(new { message = "Giriş başarılı" });
         }
 
-        [HttpPost("verify-token")]
-        public IActionResult VerifyToken()
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
         {
-            var authHeader = Request.Headers["Authorization"].FirstOrDefault();
-            if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            var sessionId = Request.Cookies["session_id"];
+            if (!string.IsNullOrEmpty(sessionId))
             {
-                return Unauthorized(new { message = "Token bulunamadı" });
+                await _sessionService.InvalidateSession(sessionId);
+                Response.Cookies.Delete("session_id");
             }
 
-            var token = authHeader.Substring("Bearer ".Length);
-            var isValid = _authService.ValidateToken(token);
-            Console.WriteLine("api tarafında verify-token çağrıldı ve isValid: " + isValid);
-            return Ok(new { isValid });
+            return Ok(new { message = "Çıkış başarılı" });
         }
 
         [HttpPost("change-password")]
@@ -216,21 +236,27 @@ namespace quantiq.Server.Controllers
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var authHeader = Request.Headers["Authorization"].FirstOrDefault();
-                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                var sessionId = Request.Cookies["session_id"];
+                if (string.IsNullOrEmpty(sessionId))
                 {
-                    return Unauthorized(new { message = "Token bulunamadı" });
+                    return Unauthorized(new { message = "Oturum bulunamadı" });
                 }
-                var token = authHeader.Substring("Bearer ".Length);
-                var userId = _authService.GetUserIdFromToken(token);
-                if (!userId.HasValue)
+
+                var isValid = await _sessionService.ValidateSession(sessionId, HttpContext.Connection.RemoteIpAddress?.ToString() ?? "", Request.Headers["User-Agent"].ToString());
+                if (!isValid)
                 {
-                    return Unauthorized("Geçersiz token");
+                    return Unauthorized(new { message = "Geçersiz oturum" });
+                }
+
+                var session = await _sessionService.GetSession(sessionId);
+                if (session == null)
+                {
+                    return Unauthorized(new { message = "Oturum bulunamadı" });
                 }
 
                 var user = await _context.Users
                     .Include(u => u.PasswordHistories)
-                    .FirstOrDefaultAsync(u => u.Id == userId.Value);
+                    .FirstOrDefaultAsync(u => u.Id == session.UserId);
 
                 if (user == null)
                     return NotFound("Kullanıcı bulunamadı");
@@ -256,6 +282,15 @@ namespace quantiq.Server.Controllers
                 _context.Users.Update(user);
 
                 // Şifre geçmişini güncelle
+                if (passwordHistory == null)
+                {
+                    passwordHistory = new UserPasswordHistory
+                    {
+                        UserId = user.Id
+                    };
+                    _context.UserPasswordHistories.Add(passwordHistory);
+                }
+
                 // En eski şifreyi güncelle
                 if (string.IsNullOrEmpty(passwordHistory.Password1))
                 {
@@ -297,6 +332,5 @@ namespace quantiq.Server.Controllers
                 return StatusCode(500, "Şifre değiştirme işlemi sırasında bir hata oluştu: " + ex.Message);
             }
         }
-
     }
 }

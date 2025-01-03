@@ -12,6 +12,7 @@ namespace quantiq.Server.Data
         public DbSet<UserPasswordHistory> UserPasswordHistories { get; set; } = null!;
         public DbSet<UserSession> UserSessions { get; set; }
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

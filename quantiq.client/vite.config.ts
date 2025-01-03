@@ -73,6 +73,10 @@ export default defineConfig({
                 target,
                 secure: false
             },
+            '^/api/Auth/logout': {
+                target,
+                secure: false
+            },
         },
         port: 54375,
         https: {

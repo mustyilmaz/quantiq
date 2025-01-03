@@ -65,7 +65,6 @@ const UserHome = () => {
       try {
         const response = await authService.getUserDetails();
         if (response.success && response.user) {
-          console.log("response user: ", response.user);
           setUserInfo({
             success: response.success,
             user: {

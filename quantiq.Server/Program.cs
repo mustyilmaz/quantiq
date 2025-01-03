@@ -1,9 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using quantiq.Server.Data;
 using quantiq.Server.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace quantiq.Server
 {
@@ -13,79 +12,87 @@ namespace quantiq.Server
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            var jwtSettings = builder.Configuration.GetSection("Jwt");
-            var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]!);
-
-            builder.Services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ClockSkew = TimeSpan.Zero
-                };
-            });
-
+            // CORS ayarları
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowLocalhost", builder =>
                 {
-                    builder.WithOrigins("https://localhost:54375",
-                    "http://localhost:54375"
-                    )
+                    builder.WithOrigins("https://localhost:54375", "http://localhost:54375")
                            .AllowAnyHeader()
-                           .AllowAnyMethod();
+                           .AllowAnyMethod()
+                           .AllowCredentials();
                 });
             });
 
-            builder.Services.AddControllers();
+            // Oturum tabanlı kimlik doğrulama
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    options.Cookie.SameSite = SameSiteMode.Strict;
+                    options.Cookie.Name = "session_id";
+                    options.LoginPath = "/api/Auth/login";
+                    options.LogoutPath = "/api/Auth/logout";
+                    options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                    options.SlidingExpiration = true;
+                    options.Events = new CookieAuthenticationEvents
+                    {
+                        OnValidatePrincipal = async context =>
+                        {
+                            var sessionService = context.HttpContext.RequestServices.GetRequiredService<SessionService>();
+                            var sessionId = context.Principal?.FindFirst("session_id")?.Value;
 
+                            if (string.IsNullOrEmpty(sessionId) || !await sessionService.ValidateSession(sessionId, context.Request.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "", context.Request.Headers["User-Agent"].ToString()))
+                            {
+                                context.RejectPrincipal();
+                                await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                            }
+                        }
+                    };
+                });
+
+            builder.Services.AddAntiforgery(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.HeaderName = "X-XSRF-TOKEN";
+            });
+
+            builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Veri tabanı bağlamı
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            // Servisleri ekleyin
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<AuthService>();
+            builder.Services.AddScoped<SessionService>();
 
             var app = builder.Build();
 
-            //Auto Migration için eklendi
-            using (var scope = app.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                dbContext.Database.Migrate();
-            }
-
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
-            app.UseRouting();
+            // CORS kullanımı
             app.UseCors("AllowLocalhost");
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseHttpsRedirection();
+            // Authentication ve Authorization middleware'lerini ekleyin
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapControllers();
+            // Swagger middleware'ini ekleyin
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quantiq API V1");
+                    c.RoutePrefix = string.Empty;
+                });
+            }
 
-            app.MapFallbackToFile("/index.html");
+            app.MapControllers();
 
             app.Run();
         }
