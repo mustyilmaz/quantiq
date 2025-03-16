@@ -89,6 +89,10 @@ export default defineConfig({
                 target,
                 secure: false
             },
+            '^/api/Trendyol/get-categories': {
+                target,
+                secure: false
+            },
         },
         port: 54375,
         https: {

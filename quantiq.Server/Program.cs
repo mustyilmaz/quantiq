@@ -72,6 +72,7 @@ namespace quantiq.Server
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<SessionService>();
+            builder.Services.AddScoped<TrendyolService>();
 
             var app = builder.Build();
 

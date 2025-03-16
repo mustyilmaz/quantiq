@@ -2,7 +2,7 @@ import { useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../../../context/AuthContext";
 import { useTheme } from "../../../context/ThemeContext";
-import { Home, Settings, Key, FileText, LogOut, Sun, Moon } from "lucide-react";
+import { Home, Settings, Key, FileText, LogOut, Sun, Moon, BookKey, BetweenHorizonalStart } from "lucide-react";
 
 interface UserNavbarProps {
   onCloseMobileMenu: () => void;
@@ -29,8 +29,13 @@ const UserNavbar = ({ onCloseMobileMenu }: UserNavbarProps) => {
     },
     {
       path: "/user/api-information",
-      icon: <FileText size={24} />,
+      icon: <BookKey size={24} />,
       text: "API Bilgileri",
+    },
+    {
+      path: "/trendyol/trendyol-categories",
+      icon: <BetweenHorizonalStart size={24} />,
+      text: "Trendyol Kategorileri",
     },
   ];
 
