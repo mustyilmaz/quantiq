@@ -332,5 +332,107 @@ namespace quantiq.Server.Controllers
                 return StatusCode(500, "Şifre değiştirme işlemi sırasında bir hata oluştu: " + ex.Message);
             }
         }
+
+        [HttpPost("save-api-info")]
+        public async Task<IActionResult> SaveApiInfo([FromBody] TrendyolConfDTO trendyolConfDto)
+        {
+            try
+            {
+                if (trendyolConfDto == null)
+                {
+                    return BadRequest("Request body cannot be null");
+                }
+
+                if (string.IsNullOrEmpty(trendyolConfDto.Apikey) || 
+                    string.IsNullOrEmpty(trendyolConfDto.SecretApikey))
+                {
+                    return BadRequest("API Key and Secret Key are required");
+                }
+
+                // Şifreleme için güvenli bir yöntem kullanın (örnek: AES)
+                var encryptedApiKey = _authService.EncryptData(trendyolConfDto.Apikey);
+                var encryptedSecretKey = _authService.EncryptData(trendyolConfDto.SecretApikey);
+
+                var trendyolConf = new TrendyolConf
+                {
+                    UserId = trendyolConfDto.UserId,
+                    Apikey = encryptedApiKey,
+                    SuppleirId = trendyolConfDto.SuppleirId,
+                    SecretApikey = encryptedSecretKey,
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.TrendyolConfs.Add(trendyolConf);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "API information saved successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { 
+                    message = "An error occurred while saving API information", 
+                    error = ex.Message 
+                });
+            }
+        }
+        
+        [HttpPost("update-api-info")]
+        public async Task<IActionResult> UpdateApiInfo([FromBody] TrendyolConfDTO trendyolConfDto)
+        {
+            try
+            {
+                var trendyolConf = await _context.TrendyolConfs.FirstOrDefaultAsync(t => t.UserId == trendyolConfDto.UserId);
+                Console.WriteLine($"TrendyolConf: {trendyolConf?.UserId}, {trendyolConf?.Apikey}, {trendyolConf?.SecretApikey}, {trendyolConf?.SuppleirId}");
+                if (trendyolConf == null)
+                {
+                    return NotFound("API information not found");
+                }
+
+                // Update the API keys using 
+                trendyolConf.Apikey = _authService.EncryptData(trendyolConfDto.Apikey);
+                trendyolConf.SecretApikey = _authService.EncryptData(trendyolConfDto.SecretApikey);
+                trendyolConf.SuppleirId = trendyolConfDto.SuppleirId;
+                trendyolConf.UpdatedAt = DateTime.UtcNow;
+
+                _context.TrendyolConfs.Update(trendyolConf);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "API information updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while updating API information");
+            }
+        }
+
+        [HttpGet("get-api-info/{userId}")]
+        public async Task<IActionResult> GetApiInfo(int userId)
+        {
+            try
+            {
+                var trendyolConf = await _context.TrendyolConfs
+                    .FirstOrDefaultAsync(t => t.UserId == userId);
+
+                if (trendyolConf == null)
+                {
+                    return NotFound("API information not found");
+                }
+
+                // Şifrelenmiş verileri çöz
+                var decryptedApiKey = _authService.DecryptData(trendyolConf.Apikey);
+                var decryptedSecretKey = _authService.DecryptData(trendyolConf.SecretApikey);
+
+                return Ok(new
+                {
+                    apikey = decryptedApiKey,
+                    secretApikey = decryptedSecretKey,
+                    suppleirId = trendyolConf.SuppleirId
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while fetching API information");
+            }
+        }
+
     }
 }

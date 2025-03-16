@@ -40,27 +40,26 @@ const App = () => {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Router>
-          <Routes>
-            <Route element={<MainLayout notification={notification} onCloseNotification={() => setNotification(null)} />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/user/login" element={<UserLogin setNotification={setNotification} />} />
-              <Route path="/register" element={<Register setNotification={setNotification} />} />
-              <Route path="/commission-calculator" element={<CommissionCalculator />} />
-            </Route>
-
-            <Route element={<ProtectedUserRoute />}>
-              <Route element={<UserDashboardLayout notification={notification} onCloseNotification={() => setNotification(null)} />}>
-                <Route path="/user/dashboard" element={<UserHome />} />
-                <Route path="/user/change-password" element={<ChangePassword setNotification={setNotification} />} />
-                <Route path="/user/api-information" element={<InfoAPI />} />
+          <Router>
+            <Routes>
+              <Route element={<MainLayout notification={notification} onCloseNotification={() => setNotification(null)} />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/user/login" element={<UserLogin setNotification={setNotification} />} />
+                <Route path="/register" element={<Register setNotification={setNotification} />} />
+                <Route path="/commission-calculator" element={<CommissionCalculator />} />
               </Route>
-            </Route>
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          
-        </Router>
+              <Route element={<ProtectedUserRoute />}>
+                <Route element={<UserDashboardLayout notification={notification} onCloseNotification={() => setNotification(null)} />}>
+                  <Route path="/user/dashboard" element={<UserHome />} />
+                  <Route path="/user/change-password" element={<ChangePassword setNotification={setNotification} />} />
+                  <Route path="/user/api-information" element={<InfoAPI />} />
+                </Route>
+              </Route>
+
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Router>
       </AuthProvider>
     </ThemeProvider>
   );

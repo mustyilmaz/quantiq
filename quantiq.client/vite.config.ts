@@ -77,6 +77,18 @@ export default defineConfig({
                 target,
                 secure: false
             },
+            '^/api/Auth/save-api-info': {
+                target,
+                secure: false
+            },
+            '^/api/Auth/get-api-info': {
+                target,
+                secure: false
+            },
+            '^/api/Auth/update-api-info': {
+                target,
+                secure: false
+            },
         },
         port: 54375,
         https: {

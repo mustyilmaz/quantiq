@@ -2,16 +2,20 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Security.Cryptography;
+using System.IO;
 
 namespace quantiq.Server.Services
 {
     public class AuthService
     {
         private readonly IConfiguration _configuration;
+        private readonly string _encryptionKey;
 
         public AuthService(IConfiguration configuration)
         {
             _configuration = configuration;
+            _encryptionKey = _configuration["Encryption:Key"] ?? throw new InvalidOperationException("Encryption key is not configured");
         }
 
         public string GenerateJwtToken(int userId)
@@ -87,6 +91,61 @@ namespace quantiq.Server.Services
             catch
             {
                 return null;
+            }
+        }
+
+        public string EncryptData(string data)
+        {
+            using (Aes aes = Aes.Create())
+            {
+                byte[] key = Convert.FromBase64String(_encryptionKey);
+                aes.Key = key;
+                aes.GenerateIV();
+
+                ICryptoTransform encryptor = aes.CreateEncryptor();
+
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    // IV'yi sakla
+                    msEncrypt.Write(aes.IV, 0, aes.IV.Length);
+
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                    {
+                        swEncrypt.Write(data);
+                    }
+
+                    return Convert.ToBase64String(msEncrypt.ToArray());
+                }
+            }
+        }
+
+        public string DecryptData(string encryptedData)
+        {
+            byte[] fullCipher = Convert.FromBase64String(encryptedData);
+
+            using (Aes aes = Aes.Create())
+            {
+                byte[] key = Convert.FromBase64String(_encryptionKey);
+                aes.Key = key;
+
+                // IV'yi al
+                byte[] iv = new byte[16];
+                Array.Copy(fullCipher, 0, iv, 0, iv.Length);
+                aes.IV = iv;
+
+                // Şifrelenmiş veriyi al
+                byte[] cipher = new byte[fullCipher.Length - iv.Length];
+                Array.Copy(fullCipher, iv.Length, cipher, 0, cipher.Length);
+
+                ICryptoTransform decryptor = aes.CreateDecryptor();
+
+                using (MemoryStream msDecrypt = new MemoryStream(cipher))
+                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                {
+                    return srDecrypt.ReadToEnd();
+                }
             }
         }
     }

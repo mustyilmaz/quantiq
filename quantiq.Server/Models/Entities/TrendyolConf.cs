@@ -15,7 +15,7 @@ namespace quantiq.Server.Models.Entities
         public int UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public User User { get; set; } = new User();
+        public User? User { get; set; }
 
         [MaxLength(100)]
         public string Description { get; set; } = string.Empty;

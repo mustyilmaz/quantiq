@@ -20,7 +20,7 @@ const NewsStrip: React.FC = () => {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 w-full z-[9999] bg-indigo-600 text-white h-10 flex items-center justify-center">
+    <div className="fixed top-0 left-0 right-0 w-full z-20 bg-indigo-600 text-white h-10 flex items-center justify-center">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentNews}
