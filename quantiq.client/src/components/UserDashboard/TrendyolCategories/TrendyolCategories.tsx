@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import styles from "./TrendyolCategories.module.css";
-import { useAuth } from "../../../hooks/useAuth";
-import { Box, Tabs, Tab } from "@mui/material";
-import { DataGrid } from '@mui/x-data-grid';
+import { useEffect, useState } from "react";
+import { Box } from "@mui/material";
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { trTR } from '@mui/x-data-grid/locales';
+import axios from 'axios';
 
 interface TrendyolCategory {
   id: number;
@@ -12,35 +11,43 @@ interface TrendyolCategory {
   subCategories: TrendyolCategory[];
 }
 
-const TrendyolCategories = () => {
-  useEffect(() => {
-    document.title = "Quantiq - E-Commerce Çözümleri - API Bilgileri";
-  }, []);
-  const auth = useAuth();
-  const userId = auth?.user?.id;
+interface FlattenedCategory extends TrendyolCategory {
+  level: number;
+  hasSubCategories?: string;
+}
 
+const TrendyolCategories = () => {
   const [categories, setCategories] = useState<TrendyolCategory[]>([]);
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(5);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = "Quantiq - Trendyol Kategorileri";
+  }, []);
 
   const fetchTrendyolCategories = async () => {
     try {
       setLoading(true);
-      setError(false);
-      const response = await fetch(`/api/Trendyol/get-categories/${userId}`);
+      setError(null);
       
-      if (response.ok) {
-        const data = await response.json();
-        setCategories(data);
+      const response = await axios.get<TrendyolCategory[]>('/api/Trendyol/get-categories', {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (Array.isArray(response.data)) {
+        setCategories(response.data);
       } else {
-        setError(true);
-        alert('Kategoriler alınamadı');
+        setCategories([]);
+        setError('Geçersiz veri formatı');
       }
     } catch (error) {
-      console.error('Kategori çekme hatası:', error);
-      setError(true);
-      alert('Kategoriler alınamadı');
+      console.error('Error fetching categories:', error);
+      setError('Kategoriler alınamadı');
+      setCategories([]);
     } finally {
       setLoading(false);
     }
@@ -48,104 +55,78 @@ const TrendyolCategories = () => {
 
   useEffect(() => {
     fetchTrendyolCategories();
-  }, [userId]);
+  }, []);
   
-  // Kategorileri düz listeye çevirme fonksiyonu güncellendi
-  const flattenCategories = (categories: TrendyolCategory[], level = 0): any[] => {
-    let result: any[] = [];
-    categories.forEach(category => {
-      result.push({
-        id: category.id,
+  const flattenCategories = (categories: TrendyolCategory[], level = 0): FlattenedCategory[] => {
+    return categories.reduce<FlattenedCategory[]>((acc, category) => {
+      const flatCategory: FlattenedCategory = {
+        ...category,
         name: "  ".repeat(level) + "└ " + category.name,
-        parentId: category.parentId,
-        subCategories: category.subCategories,
-        level: level
-      });
-      if (category.subCategories?.length > 0) {
-        result = result.concat(flattenCategories(category.subCategories, level + 1));
-      }
-    });
-    return result;
+        level,
+        hasSubCategories: category.subCategories?.length > 0 ? 'Var' : 'Yok'
+      };
+      
+      return [
+        ...acc,
+        flatCategory,
+        ...(category.subCategories?.length > 0 
+          ? flattenCategories(category.subCategories, level + 1) 
+          : [])
+      ];
+    }, []);
   };
 
-  // Sütun tanımları güncellendi
-  const columns = [
-    { field: 'id', headerName: 'Kategori ID', width: 200 },
+  const columns: GridColDef[] = [
+    { 
+      field: 'id', 
+      headerName: 'Kategori ID', 
+      width: 200,
+      type: 'number'
+    },
     { 
       field: 'name', 
       headerName: 'Kategori Adı', 
       width: 600,
-      renderCell: (params: any) => (
-        <div style={{ 
-          paddingLeft: `${params.row.level * 20}px`,
-          display: 'flex',
-          alignItems: 'center'
-        }}>
+      renderCell: (params: GridRenderCellParams<FlattenedCategory>) => (
+        <div className="flex items-center" style={{ paddingLeft: `${params.row.level * 20}px` }}>
           {params.value}
         </div>
       )
     },
-    { field: 'parentId', headerName: 'Üst Kategori ID', width: 200 },
+    { 
+      field: 'parentId', 
+      headerName: 'Üst Kategori ID', 
+      width: 200,
+      type: 'number'
+    },
     {
       field: 'hasSubCategories', 
       headerName: 'Alt Kategoriler', 
       width: 200,
-      renderCell: (params: { row: { subCategories?: any[] } }) => 
-        (params.row.subCategories && params.row.subCategories.length > 0) ? 'Var' : 'Yok'
+      type: 'string'
     },
   ];
 
   return (
-    <div className={styles.container}>
-      <h1 style={{
-        fontSize: '24px',
-        fontWeight: 'bold',
-        marginBottom: '20px',
-        color: '#333'
-      }}>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold text-text-primary mb-6">
         Trendyol Kategorileri
       </h1>
       
       {error && (
-        <Box sx={{ mb: 2 }}>
+        <div className="mb-4">
+          <p className="text-red-500 mb-2">{error}</p>
           <button 
             onClick={fetchTrendyolCategories}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#1976d2',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
+            className="px-4 py-2 bg-accent-color text-white rounded-lg hover:bg-opacity-90 transition-colors"
           >
             Yeniden Dene
           </button>
-        </Box>
+        </div>
       )}
-      <Box sx={{ 
-        height: 'auto', 
-        width: '100%',
-        maxWidth: '1400px',
-        margin: '0 auto',
-        mt: 3,
-        '& .MuiDataGrid-root': {
-          border: '1px solid #e0e0e0',
-          borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        },
-        '& .MuiDataGrid-row:hover': {
-          backgroundColor: '#f5f5f5',
-        },
-        '& .MuiDataGrid-columnHeaders': {
-          backgroundColor: '#f8f9fa',
-          borderBottom: '2px solid #e0e0e0',
-        },
-        '& .MuiDataGrid-cell': {
-          borderBottom: '1px solid #f0f0f0',
-        }
-      }}>
-        <DataGrid
+
+      <Box className="bg-bg-secondary rounded-lg shadow-md">
+        <DataGrid<FlattenedCategory>
           rows={flattenCategories(categories)}
           columns={columns}
           initialState={{
@@ -163,8 +144,19 @@ const TrendyolCategories = () => {
           disableRowSelectionOnClick
           autoHeight
           sx={{
+            border: 'none',
             '& .MuiDataGrid-virtualScroller': {
-              minHeight: '400px',
+              minHeight: '400px'
+            },
+            '& .MuiDataGrid-row:hover': {
+              backgroundColor: 'rgba(0, 0, 0, 0.04)'
+            },
+            '& .MuiDataGrid-columnHeaders': {
+              backgroundColor: 'rgba(0, 0, 0, 0.02)',
+              borderBottom: '1px solid rgba(0, 0, 0, 0.1)'
+            },
+            '& .MuiDataGrid-cell': {
+              borderBottom: '1px solid rgba(0, 0, 0, 0.05)'
             }
           }}
         />

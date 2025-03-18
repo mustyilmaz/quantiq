@@ -24,6 +24,7 @@ import UserHome from "./components/UserDashboard/UserHome/UserHome";
 import ChangePassword from "./components/UserDashboard/ChangePassword/ChangePassword";
 import InfoAPI from "./components/UserDashboard/InfoAPI/InfoAPI";
 import TrendyolCategories from "./components/UserDashboard/TrendyolCategories/TrendyolCategories";
+import TrendyolBrands from "./components/UserDashboard/TrendyolBrands/TrendyolBrands";
 
 
 //Routes 
@@ -56,6 +57,7 @@ const App = () => {
                   <Route path="/user/change-password" element={<ChangePassword setNotification={setNotification} />} />
                   <Route path="/user/api-information" element={<InfoAPI />} />
                   <Route path="/trendyol/trendyol-categories" element={<TrendyolCategories />} />
+                  <Route path="/trendyol/trendyol-brands" element={<TrendyolBrands />} />
                 </Route>
               </Route>
 

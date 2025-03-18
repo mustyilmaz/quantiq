@@ -93,6 +93,15 @@ export default defineConfig({
                 target,
                 secure: false
             },
+            '^/api/Trendyol/brands': {
+                target,
+                secure: false
+            },
+            '^/api/Trendyol/brands-by-name': {
+                target,
+                secure: false
+            },
+
         },
         port: 54375,
         https: {

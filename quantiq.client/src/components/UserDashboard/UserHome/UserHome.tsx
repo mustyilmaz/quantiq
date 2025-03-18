@@ -85,34 +85,6 @@ const UserHome = () => {
     fetchUserInfo();
   }, []);
 
-  /* const handleVerification = async (type: "email" | "phone") => {
-    try {
-      const token = localStorage.getItem("auth_token");
-      // Development aşamasında direkt true yapıyoruz
-      // Gerçek implementasyonda bu kısım API çağrısı yapacak
-      setUserInfo((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          user: {
-            ...prev.user,
-            isEmailVerified:
-              type === "email" ? true : prev.user.isEmailVerified,
-            isPhoneNumberVerified:
-              type === "phone" ? true : prev.user.isPhoneNumberVerified,
-          },
-        };
-      });
-    } catch (error) {
-      console.error(`Error verifying ${type}:`, error);
-      setError(
-        `${
-          type === "email" ? "E-posta" : "Telefon"
-        } doğrulama işlemi başarısız oldu`
-      );
-    }
-  }; */
-
   if (loading) {
     return <div className={styles.loading}>Loading...</div>;
   }
