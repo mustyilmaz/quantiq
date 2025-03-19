@@ -48,21 +48,21 @@ public class TrendyolService
         }
     }
 
-    public async Task<IEnumerable<TrendyolBrand>> GetBrands(string apiKey, string apiSecret, int page)
+    public async Task<TrendyolBrandResponse> GetBrands(string apiKey, string apiSecret, int page, int size = 1000)
     {
         try
         {
             var authString = $"{apiKey}:{apiSecret}";
             var base64Auth = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authString));
 
-            using var request = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl}brands?page={page}&size=1000");
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl}product/brands?page={page}&size={size}");
             request.Headers.Add("Authorization", $"Basic {base64Auth}");
 
             var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-
+            
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -70,7 +70,11 @@ public class TrendyolService
             };
 
             var result = JsonSerializer.Deserialize<TrendyolBrandResponse>(content, options);
-            return result?.Brands ?? new List<TrendyolBrand>();
+            if (result == null)
+            {
+                return new TrendyolBrandResponse { Brands = new List<TrendyolBrand>() };
+            }
+            return result;
         }
         catch (Exception ex)
         {
@@ -91,7 +95,6 @@ public class TrendyolService
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            Console.WriteLine("ne oldu simdi",content);
 
             var options = new JsonSerializerOptions
             {

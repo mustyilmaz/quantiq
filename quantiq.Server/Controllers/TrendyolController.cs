@@ -73,7 +73,7 @@ namespace Controllers
         }
 
         [HttpGet("brands")]
-        public async Task<IActionResult> GetBrands([FromQuery] int page = 1)
+        public async Task<IActionResult> GetBrands([FromQuery] int page = 1, [FromQuery] int size = 1000)
         {
             try
             {
@@ -102,8 +102,8 @@ namespace Controllers
                 var apikey = _authService.DecryptData(apiInfo.Apikey);
                 var secretkey = _authService.DecryptData(apiInfo.SecretApikey);
 
-                var brands = await _trendyolService.GetBrands(apikey, secretkey, page);
-                return Ok(brands);
+                var response = await _trendyolService.GetBrands(apikey, secretkey, page, size);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -113,7 +113,7 @@ namespace Controllers
         }
 
         [HttpGet("brands-by-name")]
-        public async Task<IActionResult> GetBrandsByName([FromQuery] string q)
+        public async Task<IActionResult> GetBrandsByName([FromQuery] string name)
         {
             try
             {
@@ -141,9 +141,19 @@ namespace Controllers
 
                 var apikey = _authService.DecryptData(apiInfo.Apikey);
                 var secretkey = _authService.DecryptData(apiInfo.SecretApikey);
-                Console.WriteLine(apikey, secretkey, q);
 
-                var brands = await _trendyolService.GetBrandsByName(apikey, secretkey, q);
+                var brands = await _trendyolService.GetBrandsByName(apikey, secretkey, name);
+                
+                // Eğer hiç marka bulunamadıysa, özel bir durum bilgisi ile boş liste döndür
+                if (!brands.Any())
+                {
+                    return Ok(new 
+                    { 
+                        brands = Array.Empty<TrendyolBrand>(),
+                        message = $"'{name}' araması için hiçbir marka bulunamadı." 
+                    });
+                }
+                
                 return Ok(brands);
             }
             catch (Exception ex)

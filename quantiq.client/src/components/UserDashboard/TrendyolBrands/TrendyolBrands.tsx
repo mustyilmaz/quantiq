@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { Search } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
@@ -13,10 +13,10 @@ interface BrandResponse {
   message?: string;
 }
 
+const PAGE_SIZE = 1000; // Trendyol API'si bir sayfada minimum 1000 marka dönüyor
+
 const TrendyolBrands = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  
-  const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(() => {
@@ -26,12 +26,13 @@ const TrendyolBrands = () => {
   const [searchTerm, setSearchTerm] = useState(() => {
     return searchParams.get('search') || '';
   });
-  const [inputSearch, setInputSearch] = useState(() => {
-    return searchParams.get('search') || '';
-  });
   const [filteredBrands, setFilteredBrands] = useState<Brand[]>([]);
-  const [searching, setSearching] = useState(!!searchParams.get('search'));
   const [searchMessage, setSearchMessage] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true); // Daha fazla sayfa olup olmadığını kontrol etmek için
+
+  useEffect(() => {
+    document.title = "Quantiq - Trendyol Markaları";
+  }, []);
 
   // URL parametrelerini güncelle
   useEffect(() => {
@@ -39,23 +40,16 @@ const TrendyolBrands = () => {
     
     if (searchTerm) {
       params.set('search', searchTerm);
-    } else {
-      params.delete('search');
     }
     
     if (page !== 1) {
       params.set('page', page.toString());
-    } else {
-      params.delete('page');
     }
     
     setSearchParams(params);
   }, [searchTerm, page, setSearchParams]);
 
-  useEffect(() => {
-    document.title = "Quantiq - Trendyol Markaları";
-  }, []);
-
+  // Markaları getir
   useEffect(() => {
     const fetchBrands = async () => {
       try {
@@ -63,111 +57,65 @@ const TrendyolBrands = () => {
         setError(null);
         setSearchMessage(null);
         
-        const response = await axios.get<Brand[]>(`/api/Trendyol/brands?page=${page}`, {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (Array.isArray(response.data)) {
-          setBrands(response.data);
-          setFilteredBrands(response.data);
-        } else {
-          setBrands([]);
-          setFilteredBrands([]);
-          setError('Geçersiz veri formatı');
-        }
-      } catch (error) {
-        console.error('Error fetching brands:', error);
-        setError('Markalar yüklenirken bir hata oluştu.');
-        setBrands([]);
-        setFilteredBrands([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (!searching) {
-      fetchBrands();
-    }
-  }, [page, searching]);
-
-  /*
-  useEffect(() => {
-    if (!searchTerm.trim()) {
-      setSearching(false);
-      setSearchMessage(null);
-      setFilteredBrands(brands);
-      return;
-    }
-
-    if (searchTerm.trim().length >= 2) {
-      const searchBrands = async () => {
-        try {
-          setSearching(true);
-          setLoading(true);
-          setSearchMessage(null);
-          setError(null);
-          
-          const response = await axios.get<BrandResponse>(`/api/Trendyol/brands-by-name?q=${encodeURIComponent(searchTerm)}`, {
+        if (searchTerm.trim()) {
+          // Arama yapılıyorsa
+          const response = await axios.get<BrandResponse>(`/api/Trendyol/brands-by-name?name=${encodeURIComponent(searchTerm)}`, {
             withCredentials: true,
             headers: {
               'Content-Type': 'application/json'
             }
           });
 
-          if (response.data && typeof response.data === 'object' && 'message' in response.data) {
-            setSearchMessage(response.data.message as string);
-            
-            if ('brands' in response.data && Array.isArray(response.data.brands)) {
-              setFilteredBrands(response.data.brands as Brand[]);
-            } else {
-              setFilteredBrands([]);
+          if (response.data && 'message' in response.data) {
+            setSearchMessage(response.data.message || null);
+            setFilteredBrands(response.data.brands || []);
+          } else {
+            setFilteredBrands(response.data as Brand[]);
+          }
+          setHasMore(false); // Arama yaparken sayfalama olmayacak
+        } else {
+          // Normal sayfalı listeleme
+          const response = await axios.get<BrandResponse>(`/api/Trendyol/brands?page=${page}&size=${PAGE_SIZE}`, {
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json'
             }
-          } 
-          else if (Array.isArray(response.data)) {
-            setFilteredBrands(response.data);
-          } 
-          else {
+          });
+
+          if (response.data && Array.isArray(response.data.brands)) {
+            setFilteredBrands(response.data.brands);
+            // Eğer gelen veri sayısı PAGE_SIZE'dan azsa, daha fazla sayfa yoktur
+            setHasMore(response.data.brands.length === PAGE_SIZE);
+          } else {
             setFilteredBrands([]);
             setError('Geçersiz veri formatı');
+            setHasMore(false);
           }
-          
-        } catch (error) {
-          console.error('Error searching brands:', error);
-          const axiosError = error as AxiosError;
-          
-          if (axiosError.response?.status === 404) {
-            setSearchMessage(`"${searchTerm}" araması için hiçbir marka bulunamadı.`);
-            setFilteredBrands([]);
-          } else {
-            setError('Marka araması yapılırken bir hata oluştu.');
-          }
-        } finally {
-          setLoading(false);
         }
-      };
+      } catch (error) {
+        console.error('Error fetching brands:', error);
+        setError('Markalar yüklenirken bir hata oluştu.');
+        setFilteredBrands([]);
+        setHasMore(false);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      searchBrands();
-    } else {
-      const filtered = brands.filter(brand =>
-        brand.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredBrands(filtered);
-    }
-  }, [searchTerm, brands, page]);
-  */
+    fetchBrands();
+  }, [page, searchTerm]);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSearchTerm(inputSearch.trim());
-    setPage(1); // Arama yapıldığında sayfa 1'e dön
+    const formData = new FormData(e.currentTarget);
+    const searchValue = formData.get('search') as string;
+    setSearchTerm(searchValue.trim());
+    setPage(1);
   };
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
-    window.scrollTo(0, 0); // Sayfa değiştiğinde en üste kaydır
+    window.scrollTo(0, 0);
   };
 
   if (loading && !filteredBrands.length) {
@@ -184,10 +132,10 @@ const TrendyolBrands = () => {
         <h1 className="text-2xl font-bold text-text-primary mb-4">Trendyol Markalar</h1>
         <form onSubmit={handleSearch} className="relative">
           <input
-            type="text"
+            type="search"
+            name="search"
             placeholder="Marka ara... (Aramak için Enter'a basın)"
-            value={inputSearch}
-            onChange={(e) => setInputSearch(e.target.value)}
+            defaultValue={searchTerm}
             className="w-full p-3 pl-10 rounded-lg bg-bg-secondary border border-border-color focus:outline-none focus:border-accent-color"
           />
           <button 
@@ -230,7 +178,7 @@ const TrendyolBrands = () => {
         ))}
       </div>
 
-      {!searching && (
+      {!searchTerm && (
         <div className="mt-6 flex justify-center gap-4">
           <button
             onClick={() => handlePageChange(Math.max(1, page - 1))}
@@ -239,9 +187,10 @@ const TrendyolBrands = () => {
           >
             Önceki Sayfa
           </button>
+          <span className="px-4 py-2">Sayfa {page}</span>
           <button
             onClick={() => handlePageChange(page + 1)}
-            disabled={loading}
+            disabled={loading || !hasMore}
             className="px-4 py-2 bg-bg-secondary text-text-primary rounded-lg border border-border-color hover:border-accent-color disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Sonraki Sayfa
