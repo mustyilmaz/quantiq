@@ -89,12 +89,17 @@ public class TrendyolService
             var authString = $"{apiKey}:{apiSecret}";
             var base64Auth = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authString));
 
-            using var request = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl}product/brands/by-name?name={Uri.EscapeDataString(brandName)}");
-            request.Headers.Add("Authorization", $"Basic {base64Auth}");
-            var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+            var encodedBrandName = Uri.EscapeDataString(brandName.Trim());
+            var requestUrl = $"{BaseUrl}product/brands/by-name?name={encodedBrandName}";
 
+
+            using var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+            request.Headers.Add("Authorization", $"Basic {base64Auth}");
+            
+            var response = await _httpClient.SendAsync(request);
             var content = await response.Content.ReadAsStringAsync();
+
+            response.EnsureSuccessStatusCode();
 
             var options = new JsonSerializerOptions
             {
@@ -102,12 +107,14 @@ public class TrendyolService
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             };
 
-            var result = JsonSerializer.Deserialize<TrendyolBrandResponse>(content, options);
-            return result?.Brands ?? new List<TrendyolBrand>();
+            // API doğrudan TrendyolBrand dizisi dönüyor
+            var brands = JsonSerializer.Deserialize<List<TrendyolBrand>>(content, options);
+            return brands ?? new List<TrendyolBrand>();
         }
         catch (Exception ex)
         {
-            throw new Exception($"Failed to fetch Trendyol brands by name: {brandName}", ex);
+            Console.WriteLine($"Trendyol API Error: {ex.Message}");
+            throw new Exception($"Marka araması başarısız oldu. Marka adı: {brandName}, Hata: {ex.Message}", ex);
         }
     }
 }

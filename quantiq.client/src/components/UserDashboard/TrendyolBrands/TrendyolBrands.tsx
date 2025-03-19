@@ -13,6 +13,22 @@ interface BrandResponse {
   message?: string;
 }
 
+// Excel sütun harflerini oluşturan yardımcı fonksiyon
+const getColumnLabel = (index: number): string => {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let label = '';
+  
+  if (index >= letters.length) {
+    label += letters[Math.floor(index / letters.length) - 1];
+    label += letters[index % letters.length];
+  } else {
+    label = letters[index];
+  }
+  
+  return label;
+};
+
+const GRID_COLUMNS = 4; // Grid sütun sayısı
 const PAGE_SIZE = 1000; // Trendyol API'si bir sayfada minimum 1000 marka dönüyor
 
 const TrendyolBrands = () => {
@@ -59,20 +75,28 @@ const TrendyolBrands = () => {
         
         if (searchTerm.trim()) {
           // Arama yapılıyorsa
-          const response = await axios.get<BrandResponse>(`/api/Trendyol/brands-by-name?name=${encodeURIComponent(searchTerm)}`, {
-            withCredentials: true,
-            headers: {
-              'Content-Type': 'application/json'
+          const response = await axios.get<Brand[]>(
+            `/api/Trendyol/brands-by-name?name=${encodeURIComponent(searchTerm)}`,
+            {
+              withCredentials: true,
+              headers: {
+                'Content-Type': 'application/json'
+              }
             }
-          });
+          );
 
-          if (response.data && 'message' in response.data) {
-            setSearchMessage(response.data.message || null);
-            setFilteredBrands(response.data.brands || []);
+          console.log('API Yanıtı:', response.data);
+
+          if (Array.isArray(response.data)) {
+            setFilteredBrands(response.data);
+            if (response.data.length === 0) {
+              setSearchMessage(`"${searchTerm}" için sonuç bulunamadı`);
+            }
           } else {
-            setFilteredBrands(response.data as Brand[]);
+            setFilteredBrands([]);
+            setError('Beklenmeyen API yanıt formatı');
           }
-          setHasMore(false); // Arama yaparken sayfalama olmayacak
+          setHasMore(false);
         } else {
           // Normal sayfalı listeleme
           const response = await axios.get<BrandResponse>(`/api/Trendyol/brands?page=${page}&size=${PAGE_SIZE}`, {
@@ -84,7 +108,6 @@ const TrendyolBrands = () => {
 
           if (response.data && Array.isArray(response.data.brands)) {
             setFilteredBrands(response.data.brands);
-            // Eğer gelen veri sayısı PAGE_SIZE'dan azsa, daha fazla sayfa yoktur
             setHasMore(response.data.brands.length === PAGE_SIZE);
           } else {
             setFilteredBrands([]);
@@ -93,8 +116,12 @@ const TrendyolBrands = () => {
           }
         }
       } catch (error) {
-        console.error('Error fetching brands:', error);
-        setError('Markalar yüklenirken bir hata oluştu.');
+        console.error('Marka arama hatası:', error);
+        if (axios.isAxiosError(error)) {
+          setError(error.response?.data?.message || 'Markalar yüklenirken bir hata oluştu');
+        } else {
+          setError('Markalar yüklenirken bir hata oluştu');
+        }
         setFilteredBrands([]);
         setHasMore(false);
       } finally {
@@ -109,7 +136,17 @@ const TrendyolBrands = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const searchValue = formData.get('search') as string;
-    setSearchTerm(searchValue.trim());
+    
+    // Boş arama kontrolü
+    if (!searchValue.trim()) {
+      setError(null); // Hata mesajını temizle
+      setSearchTerm(''); // Arama terimini temizle
+      setPage(1); // Sayfa numarasını sıfırla
+      return;
+    }
+    
+    // Arama terimini olduğu gibi kullan (büyük/küçük harf değiştirme)
+    setSearchTerm(searchValue);
     setPage(1);
   };
 
@@ -166,17 +203,56 @@ const TrendyolBrands = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {filteredBrands.map((brand) => (
-          <div
-            key={brand.id}
-            className="p-4 bg-bg-secondary rounded-lg border border-border-color hover:border-accent-color transition-colors"
-          >
-            <p className="text-text-primary font-medium">{brand.name}</p>
-            <p className="text-text-secondary text-sm mt-1">ID: {brand.id}</p>
-          </div>
-        ))}
+      <div className="relative overflow-x-auto">
+        {/* Sütun başlıkları */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-2 min-w-[800px]">
+          {Array.from({ length: GRID_COLUMNS }).map((_, index) => (
+            <div key={`header-${index}`} className="text-center font-medium text-text-secondary">
+              {getColumnLabel(index)}
+            </div>
+          ))}
+        </div>
+
+        {/* Markalar grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 min-w-[800px]">
+          {filteredBrands.map((brand, index) => {
+            const row = Math.floor(index / GRID_COLUMNS) + 1;
+            const col = getColumnLabel(index % GRID_COLUMNS);
+            const position = `${col}-${row}`;
+            const brandNumber = (page - 1) * PAGE_SIZE + index + 1;
+
+            return (
+              <div
+                key={brand.id}
+                className="p-4 bg-bg-secondary rounded-lg border border-border-color hover:border-accent-color transition-colors relative group"
+                title={`Konum: ${position} / Marka No: ${brandNumber}`}
+              >
+                <div className="absolute -top-2 -left-2 bg-accent-color text-white text-xs px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  {position} / {brandNumber}
+                </div>
+                <p className="text-text-primary font-medium truncate">{brand.name}</p>
+                <p className="text-text-secondary text-sm mt-1">ID: {brand.id}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Satır numaraları */}
+        <div className="absolute left-0 top-0 -ml-8 hidden xl:block">
+          {Array.from({ length: Math.ceil(filteredBrands.length / GRID_COLUMNS) }).map((_, index) => (
+            <div
+              key={`row-${index + 1}`}
+              className="h-[88px] flex items-center justify-end text-text-secondary pr-2"
+              style={{ marginTop: index === 0 ? '40px' : '0' }}
+            >
+              {index + 1}
+            </div>
+          ))}
+        </div>
       </div>
+
+      {/* Yatay scroll çubuğu varsa alt boşluk ekle */}
+      <div className="h-4"></div>
 
       {!searchTerm && (
         <div className="mt-6 flex justify-center gap-4">
